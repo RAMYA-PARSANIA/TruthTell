@@ -1,17 +1,17 @@
 # 🌐 Nexus of Truth: Real-Time Misinformation Detection System
 
-![Hackathon Project](https://img.shields.io/badge/TruthTell-HackathonProject-blue)
-![AI Technology](https://img.shields.io/badge/Technology-AI%20%26%20NLP-green)
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-Deep%20Learning-orange?logo=tensorflow)
-![PyTorch](https://img.shields.io/badge/PyTorch-Machine%20Learning-red?logo=pytorch)
-![BERT](https://img.shields.io/badge/BERT-NLP%20Model-lightblue)
-![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-Real--Time%20Processing-black?logo=apache-kafka)
-![Neo4j](https://img.shields.io/badge/Neo4j-Knowledge%20Graph-green?logo=neo4j)
-![AWS](https://img.shields.io/badge/AWS-Cloud%20Deployment-orange?logo=amazon-aws)
-![Docker](https://img.shields.io/badge/Docker-Containerization-blue?logo=docker)
-![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Advanced%20AI-blueviolet)
-![Natural Language Processing](https://img.shields.io/badge/NLP-Text%20Analysis-brightgreen)
+![](https://img.shields.io/badge/TruthTell-HackathonProject-blue)
+![](https://img.shields.io/badge/Technology-AI%20%26%20NLP-green)
+![](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![](https://img.shields.io/badge/TensorFlow-Deep%20Learning-orange?logo=tensorflow)
+![](https://img.shields.io/badge/PyTorch-Machine%20Learning-red?logo=pytorch)
+![](https://img.shields.io/badge/BERT-NLP%20Model-lightblue)
+![](https://img.shields.io/badge/Apache%20Kafka-Real--Time%20Processing-black?logo=apache-kafka)
+![](https://img.shields.io/badge/Neo4j-Knowledge%20Graph-green?logo=neo4j)
+<!-- ![](https://img.shields.io/badge/AWS-Cloud%20Deployment-orange?logo=amazon-aws) -->
+![](https://img.shields.io/badge/Docker-Containerization-blue?logo=docker)
+![](https://img.shields.io/badge/Machine%20Learning-Advanced%20AI-blueviolet)
+![](https://img.shields.io/badge/NLP-Text%20Analysis-brightgreen)
 
 
 ## 🎯 Problem Statement

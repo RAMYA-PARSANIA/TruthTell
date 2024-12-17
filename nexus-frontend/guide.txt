@@ -1,0 +1,119 @@
+Core Technologies
+
+
+Frontend Framework: React.js
+
+Lightweight
+Component-based architecture
+Easy to create modular UI
+
+
+Language:
+
+TypeScript (for type safety)
+JavaScript
+
+
+
+
+Browser Extension Development
+
+
+Browser APIs:
+
+Chrome Extension API
+Firefox WebExtensions API
+
+
+Cross-Browser Compatibility:
+
+webextension-polyfill
+
+
+
+
+State Management
+
+
+Redux Toolkit or Zustand
+
+Manage complex state
+Handle real-time fact-checking data
+
+
+
+
+AI and NLP Integration
+
+
+TensorFlow.js (client-side ML)
+Hugging Face Transformers.js
+compromise.js (lightweight NLP)
+
+
+Styling and UI
+
+
+Tailwind CSS
+
+Rapid, utility-first styling
+Responsive design
+
+
+Shadcn/UI
+
+Pre-built, customizable components
+Consistent design system
+
+
+
+
+Real-Time Communication
+
+
+Socket.io or WebSockets
+
+Instant updates
+Low-latency data transmission
+
+
+
+
+API and Data Fetching
+
+
+Axios or Fetch API
+React Query
+
+Efficient data fetching
+Caching mechanisms
+
+
+
+
+Build and Bundling
+
+
+Webpack
+Parcel
+Vite
+
+Fast development
+Efficient bundling
+
+
+
+
+Testing
+
+
+Jest
+React Testing Library
+
+
+Deployment
+
+
+Chrome Web Store
+Firefox Add-ons
+Docker (for containerization)

@@ -2,11 +2,15 @@ import requests
 import json
 import speech_recognition as sr
 from typing import Union, Dict, List
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 class FactCheckService:
-    def __init__(self, google_api_key: str):
-        self.google_api_key = google_api_key
-        self.fact_check_endpoint = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
+    def __init__(self):
+        self.google_api_key = os.getenv("GOOGLE_API_KEY")
+        self.fact_check_endpoint = os.getenv("FACT_CHECK_URL")
         self.recognizer = sr.Recognizer()
 
     def process_voice_input(self, audio_file_path: str) -> str:
@@ -24,7 +28,7 @@ class FactCheckService:
     def check_facts(self, input_content: Union[str, bytes], content_type: str = "text") -> List[Dict]:
         """
         Check facts from either text or voice input.
-        
+            
         Args:
             input_content: Either text string or path to audio file
             content_type: "text" or "voice"
@@ -39,15 +43,18 @@ class FactCheckService:
             text_content = input_content
 
         # Prepare API request
+        print(text_content)
         params = {
             "key": self.google_api_key,
-            "query": text_content
+            "query": text_content,
+            "languageCode": "en"
         }
 
         try:
             response = requests.get(self.fact_check_endpoint, params=params)
             response.raise_for_status()
             
+            print(response.json())
             results = response.json().get("claims", [])
             
             # Process and format results
@@ -101,3 +108,9 @@ class FactCheckService:
             "true_claims": true_counts,
             "false_claims": false_counts
         }
+
+if __name__ == "__main__":
+    factChecker = FactCheckService()
+    String = "The earth is not flat"
+    results = factChecker.check_facts(String, "text")
+    print(results)

@@ -5,9 +5,6 @@ from .gemini_client import GeminiClient
 
 # fmt: off
 CLIENTS = {
-    "gpt": GPTClient,
-    "claude": ClaudeClient,
-    "local_openai": LocalOpenAIClient,
     "gemini": GeminiClient
 }
 # fmt: on

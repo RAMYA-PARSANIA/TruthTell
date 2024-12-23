@@ -22,9 +22,9 @@ logger = CustomLogger(__name__).getlog()
 class FactCheck:
     def __init__(
         self,
-        default_model: str = "gpt-4o",
+        default_model: str = "gemini-2.0-flash-exp",
         client: str = None,
-        prompt: str = "chatgpt_prompt",
+        prompt: str = "gemini_prompt",
         retriever: str = "serper",
         decompose_model: str = None,
         checkworthy_model: str = None,

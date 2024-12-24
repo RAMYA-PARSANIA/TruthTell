@@ -42,10 +42,7 @@ class Decompose:
             list: a list of claims
         """
         if prompt is None:
-            # print("Prompt is none")
-            # print(f"Prompt: {self.prompt.decompose_prompt.replace("{doc}",doc)}")
             user_input = self.prompt.decompose_prompt.replace("{doc}",doc).strip()
-            print(user_input)
         else:
             user_input = prompt.replace("{doc}",doc).strip()
 

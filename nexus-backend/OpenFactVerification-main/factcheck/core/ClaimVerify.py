@@ -54,9 +54,9 @@ class ClaimVerify:
         for claim, _evidences in claim_evidences_dict.items():
             for e in _evidences:
                 if prompt is None:
-                    user_input = self.prompt.verify_prompt.format(claim=claim, evidence=e)
+                    user_input = self.prompt.verify_prompt.replace("{claim}", str(claim)).replace("{evidence}", str(e))
                 else:
-                    user_input = prompt.format(claim=claim, evidence=e)
+                    user_input = prompt.replace("{claim}", str(claim)).replace("{evidence}", str(e))
                 claim_evidence_list.append((claim, e))
                 messages_list.append(user_input)
         factual_results = [None] * len(messages_list)

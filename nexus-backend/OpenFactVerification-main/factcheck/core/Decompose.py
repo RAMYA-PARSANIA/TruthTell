@@ -1,5 +1,6 @@
 from factcheck.utils.logger import CustomLogger
 import nltk
+from google.ai.generativelanguage_v1beta.types import content
 
 logger = CustomLogger(__name__).getlog()
 
@@ -41,9 +42,12 @@ class Decompose:
             list: a list of claims
         """
         if prompt is None:
-            user_input = self.prompt.decompose_prompt.format(doc=doc).strip()
+            # print("Prompt is none")
+            # print(f"Prompt: {self.prompt.decompose_prompt.replace("{doc}",doc)}")
+            user_input = self.prompt.decompose_prompt.replace("{doc}",doc).strip()
+            print(user_input)
         else:
-            user_input = prompt.format(doc=doc).strip()
+            user_input = prompt.replace("{doc}",doc).strip()
 
         claims = None
         messages = self.llm_client.construct_message_list([user_input])
@@ -52,6 +56,19 @@ class Decompose:
                 messages=messages,
                 num_retries=1,
                 seed=42 + i,
+                schema=content.Schema(
+                    type = content.Type.OBJECT,
+                    enum = [],
+                    required = ["claims"],
+                    properties = {
+                    "claims": content.Schema(
+                        type = content.Type.ARRAY,
+                        items = content.Schema(
+                        type = content.Type.STRING,
+                        ),
+                    ),
+                    },
+                ),
             )
             try:
                 claims = eval(response)["claims"]
@@ -108,10 +125,11 @@ class Decompose:
 
             return claim2doc_detail, flag
 
+        claims_str = str(claims)
         if prompt is None:
-            user_input = self.prompt.restore_prompt.format(doc=doc, claims=claims).strip()
+            user_input = self.prompt.restore_prompt.replace("{doc}", doc).replace("{claims}", claims_str).strip()
         else:
-            user_input = prompt.format(doc=doc, claims=claims).strip()
+            user_input = prompt.replace("{doc}", doc).replace("{claims}", claims_str).strip()
 
         messages = self.llm_client.construct_message_list([user_input])
 

@@ -32,9 +32,9 @@ class QueryGenerator:
         messages_list = []
         for claim in claims:
             if prompt is None:
-                user_input = self.prompt.qgen_prompt.format(claim=claim)
+                user_input = self.prompt.qgen_prompt.replace("{claim}",claim)
             else:
-                user_input = prompt.format(claim=claim)
+                user_input = prompt.replace("{claim}",claim)
             messages_list.append(user_input)
 
         while (attempts < generating_time) and ([] in generated_questions):

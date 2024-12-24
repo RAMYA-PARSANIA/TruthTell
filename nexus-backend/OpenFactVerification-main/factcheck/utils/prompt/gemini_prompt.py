@@ -20,27 +20,27 @@ Text: {doc}
 Output:
 """
 
-# restore_prompt = """
-# Split this text into chunks that correspond to each derived fact. Each chunk should:
-# - Be a continuous span from the original text
-# - Contain the information needed to derive the fact
-# - When combined, reproduce the complete original text
+restore_prompt = """
+Split this text into chunks that correspond to each derived fact. Each chunk should:
+- Be a continuous span from the original text
+- Contain the information needed to derive the fact
+- When combined, reproduce the complete original text
 
-# Example:
-# Text: Mary is a five-year old girl, she likes playing piano and she doesn't like cookies.
-# Facts: ["Mary is a five-year old girl.", "Mary likes playing piano.", "Mary doesn't like cookies."]
+Example:
+Text: Mary is a five-year old girl, she likes playing piano and she doesn't like cookies.
+Facts: ["Mary is a five-year old girl.", "Mary likes playing piano.", "Mary doesn't like cookies."]
 
-# Expected Output:
-# {
-#     "Mary is a five-year old girl.": "Mary is a five-year old girl,",
-#     "Mary likes playing piano.": "she likes playing piano",
-#     "Mary doesn't like cookies.": "and she doesn't like cookies."
-# }
+Expected Output:
+{
+    "Mary is a five-year old girl.": "Mary is a five-year old girl,",
+    "Mary likes playing piano.": "she likes playing piano",
+    "Mary doesn't like cookies.": "and she doesn't like cookies."
+}
 
-# Text: {doc}
-# Facts: {claims}
-# Output:
-# """
+Text: {doc}
+Facts: {claims}
+Output:
+"""
 
 checkworthy_prompt = """
 Evaluate each statement's factual verifiability. A statement is verifiable if:
@@ -102,6 +102,7 @@ Output:
 
 class GeminiPrompt:
     decompose_prompt = decompose_prompt
+    restore_prompt = restore_prompt
     checkworthy_prompt = checkworthy_prompt
     qgen_prompt = qgen_prompt
     verify_prompt = verify_prompt

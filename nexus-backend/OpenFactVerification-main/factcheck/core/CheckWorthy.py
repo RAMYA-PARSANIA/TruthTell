@@ -28,9 +28,9 @@ class Checkworthy:
         joint_texts = "\n".join([str(i + 1) + ". " + j for i, j in enumerate(texts)])
 
         if prompt is None:
-            user_input = self.prompt.checkworthy_prompt.format(texts=joint_texts)
+            user_input = self.prompt.checkworthy_prompt.replace("{texts}", joint_texts)
         else:
-            user_input = prompt.format(texts=joint_texts)
+            user_input = prompt.replace("{texts}", joint_texts)
 
         messages = self.llm_client.construct_message_list([user_input])
         for i in range(num_retries):

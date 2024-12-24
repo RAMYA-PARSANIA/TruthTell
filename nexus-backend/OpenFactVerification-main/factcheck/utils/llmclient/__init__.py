@@ -19,6 +19,7 @@ def model2client(model_name: str):
     elif model_name.startswith("vicuna"):
         return LocalOpenAIClient
     elif model_name.startswith("gemini"):
+        print("Using GeminiClient")
         return GeminiClient
     else:
         raise ValueError(f"Model {model_name} not supported.")

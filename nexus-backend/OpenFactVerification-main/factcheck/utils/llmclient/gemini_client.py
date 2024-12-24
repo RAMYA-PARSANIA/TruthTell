@@ -32,7 +32,7 @@ class GeminiClient(BaseClient):
             generation_config={
                 'max_output_tokens': 2048,
                 'temperature': self.temperature,
-                'seed': self.seed
+                "response_mime_type": "application/json"
             }
         )
         if response.parts:

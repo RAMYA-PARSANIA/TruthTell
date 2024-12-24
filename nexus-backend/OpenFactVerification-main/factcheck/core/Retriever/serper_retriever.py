@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import json
 import requests
+import dotenv
 import os
 import re
 import bs4

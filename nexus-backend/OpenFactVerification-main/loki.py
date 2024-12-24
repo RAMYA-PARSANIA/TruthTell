@@ -1,4 +1,4 @@
-from Loki.factcheck import FactCheck
+from factcheck import FactCheck
 
 factcheck_instance = FactCheck()
 

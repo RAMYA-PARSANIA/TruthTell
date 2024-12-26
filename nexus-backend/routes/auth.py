@@ -83,8 +83,7 @@ async def register(user: UserCreate):
             status_code=400,
             detail="Username already taken"
         )
-    await Database.save_user(user.dict())
-    await Database.add_empty_dict(user.username)
+    await Database.save_user(user.model_dump())
 
     return {"message": "User created successfully"}
 

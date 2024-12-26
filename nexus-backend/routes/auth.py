@@ -10,10 +10,8 @@ from db.init_db import Database
 from bson import ObjectId
 import os
 import dotenv
-from passlib.context import CryptContext
 
 dotenv.load_dotenv()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -37,12 +35,6 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-def verify_password(self, plain_password, hashed_password):
-        return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

@@ -1,3 +1,5 @@
+import numpy as np
+from typing import List, Optional
 class ResultAggregator:
     def __init__(self):
         self.temporal_window = 5  # Consider temporal context

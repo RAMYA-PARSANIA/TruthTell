@@ -1,8 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Optional
 import numpy as np
 import cv2
+import os
 import torch
 from pydantic import BaseModel
 from datetime import datetime
@@ -11,19 +11,39 @@ from pathlib import Path
 from detector import DeepFakeDetector
 from videoprocess import VideoProcessor
 from result import ResultAggregator
-from error_handlers import handle_detection_error
+from error_handlers import handle_detection_error, deepfake_router
+from basemodels import DetectionResult, AnalysisMetadata
+from helper import save_temp_file, compute_file_hash
+from contextlib import asynccontextmanager
+import uvicorn
 
-logging.baseConfig(
+logging.basicConfig(
     level = logging.INFO,
     format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
 logger = logging.getLogger(__name__)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize detector on startup
+    detector = DeepFakeDetector()
+    app.state.detector = detector  # Store detector in app state for access
+    
+    create_directories()
+    logger.info("Deepfake detection service started")
+    
+    try:
+        yield
+        # Keep running until explicitly stopped
+    finally:
+        logger.info("Deepfake detection service shutting down")
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Deep Fake Detection API",
     description="API for detecting deep fake images and videos",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Add CORS middleware
@@ -35,6 +55,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(deepfake_router, tags=["deepfake"])
+
 # Dependency for getting detector instances
 async def get_detector():
     detector = DeepFakeDetector()
@@ -44,51 +66,28 @@ async def get_detector():
         # Cleanup if needed
         pass
 
-# Data Models
-class DetectionResult(BaseModel):
-    is_deepfake: bool
-    confidence_score: float
-    detection_method: str
-    analyzed_features: List[str]
-    processing_time: float
-    timestamp: datetime
-
-class AnalysisMetadata(BaseModel):
-    file_hash: str
-    file_size: int
-    frame_count: Optional[int]
-    resolution: tuple
-    format: str
-
 # Routes with integrated components
 @app.post("/api/v1/analyze/image", response_model=DetectionResult)
 async def analyze_image(
     file: UploadFile = File(...),
     detector: DeepFakeDetector = Depends(get_detector)
 ):
-    """
-    Analyze a single image for deep fake detection
-    """
     try:
         logger.info(f"Processing image: {file.filename}")
         
-        # Read and preprocess image
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
-        # Get image metadata
         metadata = AnalysisMetadata(
             file_hash=compute_file_hash(contents),
             file_size=len(contents),
+            frame_count=1,  # For single image
             resolution=(image.shape[1], image.shape[0]),
             format=file.content_type
         )
         
-        # Run detection using our detector class
         result = detector.detect(image)
-        
-        logger.info(f"Analysis complete for {file.filename}")
         
         return DetectionResult(
             is_deepfake=result['is_deepfake'],
@@ -96,56 +95,54 @@ async def analyze_image(
             detection_method="ensemble_cnn",
             analyzed_features=["facial_features", "image_artifacts", "noise_patterns"],
             processing_time=result['processing_time'],
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
+            metadata=metadata
         )
     
     except Exception as e:
         logger.error(f"Error processing image {file.filename}: {str(e)}")
         raise handle_detection_error(e)
 
-@app.post("/api/v1/analyze/video", response_model=DetectionResult)
-async def analyze_video(
-    file: UploadFile = File(...),
-    detector: DeepFakeDetector = Depends(get_detector)
-):
-    """
-    Analyze a video for deep fake detection
-    """
+
+@deepfake_router.post("/api/v1/analyze/video", response_model=DetectionResult)
+async def analyze_video(file: UploadFile = File(...)):
     try:
-        logger.info(f"Processing video: {file.filename}")
-        
-        # Initialize video processor and result aggregator
+        detector = DeepFakeDetector()
         processor = VideoProcessor(detector)
         aggregator = ResultAggregator()
         
-        # Save video temporarily
         contents = await file.read()
         temp_path = save_temp_file(contents)
+        file_hash = compute_file_hash(contents)
         
         try:
-            # Process video frames
             frame_results = await processor.process_video(temp_path)
-            
-            # Aggregate results
             final_result = aggregator.aggregate_video_results(frame_results)
             
-            logger.info(f"Video analysis complete for {file.filename}")
+            metadata = AnalysisMetadata(
+                file_hash=file_hash,
+                frame_count=len(frame_results),  # Add the frame count here
+                format=file.content_type,
+                timestamp=datetime.now()
+            )
             
             return DetectionResult(
                 is_deepfake=final_result['is_deepfake'],
                 confidence_score=final_result['confidence'],
                 detection_method="temporal_cnn",
-                analyzed_features=["facial_dynamics", "temporal_consistency", "audio_visual_sync"],
+                analyzed_features=["facial_dynamics", "temporal_consistency"],
                 processing_time=final_result['processing_time'],
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
+                metadata=metadata
             )
             
+        except Exception as e:
+            raise handle_detection_error(e)
+            
         finally:
-            # Cleanup temporary file
-            Path(temp_path).unlink(missing_ok=True)
-    
+            os.unlink(temp_path)
+            
     except Exception as e:
-        logger.error(f"Error processing video {file.filename}: {str(e)}")
         raise handle_detection_error(e)
 
 # Middleware for request logging
@@ -162,20 +159,6 @@ def create_directories():
     directories = ['temp', 'logs']
     for directory in directories:
         Path(directory).mkdir(exist_ok=True)
-
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    """Initialize everything we need on startup"""
-    create_directories()
-    logger.info("Application started")
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    logger.info("Application shutting down")
-    # Add any cleanup code here
 
 # File structure should look like:
 """
@@ -196,18 +179,3 @@ deepfake_detector/
 └── logs/               # Log files
 """
 
-# Create a file utils.py with helper functions:
-"""
-from pathlib import Path
-import hashlib
-import tempfile
-
-def compute_file_hash(contents: bytes) -> str:
-    return hashlib.sha256(contents).hexdigest()
-
-def save_temp_file(contents: bytes) -> str:
-    temp_dir = Path("temp")
-    temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir)
-    temp_file.write(contents)
-    return temp_file.name
-"""

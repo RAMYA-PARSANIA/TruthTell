@@ -1,3 +1,8 @@
+from detector import DeepFakeDetector
+from typing import List
+import cv2
+import numpy as np
+import concurrent
 class VideoProcessor:
     def __init__(self, detector: DeepFakeDetector):
         self.detector = detector

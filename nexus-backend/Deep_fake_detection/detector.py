@@ -1,3 +1,8 @@
+import torch
+import cv2
+import time
+import numpy as np
+
 class DeepFakeDetector:
     def __init__(self):
         self.face_detector = self.load_face_detector()
@@ -9,11 +14,13 @@ class DeepFakeDetector:
         Load face detection model (using MTCNN for high accuracy)
         """
         from facenet_pytorch import MTCNN
+        dev = 'cuda' if torch.cuda.is_available() else 'cpu'
+        print(dev)
         return MTCNN(
             image_size=224,
             margin=40,
             keep_all=True,
-            device='cuda' if torch.cuda.is_available() else 'cpu'
+            device=dev
         )
     
     def load_feature_extractor(self):
@@ -45,21 +52,32 @@ class DeepFakeDetector:
         # Convert BGR to RGB
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         
-        # Detect faces
+        # Detect faces with additional checks
         boxes, _ = self.face_detector.detect(image_rgb)
-        if boxes is None:
+        if boxes is None or len(boxes) == 0:
             raise ValueError("No faces detected in image")
         
-        # Extract and preprocess face regions
+        # Extract and preprocess face regions with validation
         faces = []
         for box in boxes:
             x1, y1, x2, y2 = map(int, box)
-            face = image_rgb[y1:y2, x1:x2]
-            face = cv2.resize(face, (224, 224))
-            face = torch.from_numpy(face).permute(2, 0, 1).float() / 255.0
-            faces.append(face)
+            # Ensure valid coordinates
+            x1, y1 = max(0, x1), max(0, y1)
+            x2, y2 = min(image_rgb.shape[1], x2), min(image_rgb.shape[0], y2)
             
+            # Verify face region is valid
+            if x2 > x1 and y2 > y1:
+                face = image_rgb[y1:y2, x1:x2]
+                if face.size > 0:  # Check if face region is not empty
+                    face = cv2.resize(face, (224, 224))
+                    face = torch.from_numpy(face).permute(2, 0, 1).float() / 255.0
+                    faces.append(face)
+        
+        if not faces:
+            raise ValueError("No valid faces could be processed")
+                
         return torch.stack(faces)
+
     
     def extract_features(self, faces: torch.Tensor):
         """

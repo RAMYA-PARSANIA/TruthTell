@@ -4,8 +4,8 @@ from db.init_db import Database
 from routes.auth import router as auth_router
 from routes.fax import fax_router
 from contextlib import asynccontextmanager
-from .util.kafka_handler import KafkaHandler
-from .util.newsfetcher import NewsFetcher
+from util.kafka_handler import KafkaHandler
+from util.newsfetcher import NewsFetcher
 import asyncio
 from kafka import KafkaConsumer
 import json

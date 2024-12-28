@@ -1,3 +1,15 @@
+from fastapi import APIRouter, HTTPException, Depends, status
+from detector import DeepFakeDetector
+from basemodels import DetectionResult, AnalysisMetadata
+from fastapi import UploadFile, File
+from videoprocess import VideoProcessor
+from result import ResultAggregator
+from helper import save_temp_file, compute_file_hash
+import datetime
+import os
+
+deepfake_router = APIRouter()
+
 class DeepFakeDetectionError(Exception):
     """Base class for detection errors"""
     pass
@@ -56,7 +68,7 @@ def handle_detection_error(e: Exception) -> HTTPException:
         )
 
 # Example usage in route
-@app.post("/api/v1/analyze/video", response_model=DetectionResult)
+@deepfake_router.post("/api/v1/analyze/video", response_model=DetectionResult)
 async def analyze_video(file: UploadFile = File(...)):
     try:
         detector = DeepFakeDetector()

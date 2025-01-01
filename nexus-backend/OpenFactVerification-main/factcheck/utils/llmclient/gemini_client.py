@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 class GeminiClient(BaseClient):
     def __init__(
         self,
-        model: str = "gemini-2.0-flash-exp",
+        model: str = "gemini-1.5-flash",
         api_config: dict = None,
         max_requests_per_minute=60,
         request_window=60,

@@ -22,7 +22,7 @@ logger = CustomLogger(__name__).getlog()
 class FactCheck:
     def __init__(
         self,
-        default_model: str = "gemini-2.0-flash-exp",
+        default_model: str = "gemini-1.5-flash",
         client: str = None,
         prompt: str = "gemini_prompt",
         retriever: str = "serper",

@@ -16,14 +16,21 @@ class NewsFetcher:
         )
         
     async def fetch_and_produce(self):
+        print("Starting NewsFetcher...")
         while True:
             try:
                 news = self.newsapi.get_top_headlines(language='en', country='us')
+                # self.producer.send('news_input', {
+                #     'title': "Trial",
+                #     'text': "Trial text",
+                #     'url': "https://www.google.com"
+                # })
                 for article in news['articles']:
-                    if article['content']:
+                    print(f"Sending news: {article['description']}")
+                    if article['description']:
                         self.producer.send('news_input', {
                             'title': article['title'],
-                            'text': article['content'],
+                            'text': article['description'],
                             'url': article['url']
                         })
                 await asyncio.sleep(300)  # Fetch every 5 minutes

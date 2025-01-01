@@ -23,8 +23,8 @@ async def lifespan(app: FastAPI):
     news_fetcher = NewsFetcher()
     
     # Start background tasks
-    asyncio.create_task(kafka_handler.process_news())
     asyncio.create_task(news_fetcher.fetch_and_produce())
+    asyncio.create_task(kafka_handler.process_news())
     
     yield
     # Shut down

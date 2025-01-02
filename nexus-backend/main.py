@@ -48,7 +48,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     consumer = KafkaConsumer(
         'factcheck_results',
-        bootstrap_servers=['localhost:9092'],
+        bootstrap_servers=['localhost:9091'],
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
     try:

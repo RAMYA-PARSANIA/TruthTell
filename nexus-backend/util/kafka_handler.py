@@ -5,12 +5,12 @@ from factcheck import FactCheck
 class KafkaHandler:
     def __init__(self):
         self.producer = KafkaProducer(
-            bootstrap_servers=['localhost:9092'],
+            bootstrap_servers=['localhost:9091'],
             value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         )
         self.consumer = KafkaConsumer(
             'news_input',
-            bootstrap_servers=['localhost:9092'],
+            bootstrap_servers=['localhost:9091'],
             value_deserializer=lambda x: json.loads(x.decode('utf-8')),
             auto_offset_reset='earliest',  # This will read from the beginning
             enable_auto_commit=True,
@@ -20,28 +20,30 @@ class KafkaHandler:
         self.factchecker = FactCheck()
 
     async def process_news(self):
-        print("Starting Kafka consumer...")
-        print("Waiting for messages on 'news_input' topic...")
+        print("Starting consumer...")
         try:
+            print("Trying...")
             for message in self.consumer:
+                print("###############################################")
                 print(f"Received message: {message}")
-                news_text = message.value['text']
+                print("###############################################")
+                news_text = message['text']
                 if not news_text or '[Removed]' in news_text:
                     continue
                 print(f"Processing news text: {news_text}")
+                print("###############################################")
                 result = self.factchecker.check_text(news_text)
                 print(f"Result: {result}")
+                print("###############################################")
                 
                 # Send and flush the message
-                future = self.producer.send('factcheck_results', result)
+                self.producer.send('factcheck_results', result)
                 self.producer.flush()  # Ensure the message is sent
                 
-                # Get the metadata about the sent message
-                metadata = future.get(timeout=10)
-                print(f"Message sent to topic {metadata.topic}, partition {metadata.partition}, offset {metadata.offset}")
-                
         except Exception as e:
+            print("###############################################")
             print(f"Error processing message: {str(e)}")
+            print("###############################################")
         finally:
             # Clean shutdown
             self.producer.close()

@@ -41,9 +41,9 @@ def check(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="gemini-1.5-flash")
+    parser.add_argument("--model", type=str, default="llama-3.3-70b-versatile")
     parser.add_argument("--client", type=str, default=None, choices=CLIENTS.keys())
-    parser.add_argument("--prompt", type=str, default="gemini_prompt")
+    parser.add_argument("--prompt", type=str, default="llama_prompt")
     parser.add_argument("--retriever", type=str, default="serper")
     parser.add_argument("--modal", type=str, default="text")
     parser.add_argument("--input", type=str, default="demo_data/text.txt")

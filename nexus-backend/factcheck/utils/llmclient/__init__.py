@@ -2,10 +2,11 @@ from .gpt_client import GPTClient
 from .claude_client import ClaudeClient
 from .local_openai_client import LocalOpenAIClient
 from .gemini_client import GeminiClient
+from .llama_client import LlamaClient
 
 # fmt: off
 CLIENTS = {
-    "gemini": GeminiClient
+    "llama": LlamaClient
 }
 # fmt: on
 
@@ -19,7 +20,9 @@ def model2client(model_name: str):
     elif model_name.startswith("vicuna"):
         return LocalOpenAIClient
     elif model_name.startswith("gemini"):
-        print("Using GeminiClient")
+        return GeminiClient
+    elif model_name.startswith("llama"):
+        print(f"Using llama client")
         return GeminiClient
     else:
         raise ValueError(f"Model {model_name} not supported.")

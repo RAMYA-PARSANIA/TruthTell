@@ -34,7 +34,7 @@ class Checkworthy:
 
         messages = self.llm_client.construct_message_list([user_input])
         for i in range(num_retries):
-            response = self.llm_client.call(messages, num_retries=1, seed=42 + i)
+            response = self.llm_client.call(messages)
             try:
                 claim2checkworthy = eval(response)
                 valid_answer = list(

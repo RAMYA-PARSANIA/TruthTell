@@ -50,19 +50,17 @@ class BaseClient:
         """Get the length of the request. Used for tracking traffic."""
         raise NotImplementedError
 
-    def call(self, messages: list[str], num_retries=3, waiting_time=1, **kwargs):
+    def call(self, messages: list[str], **kwargs):
         seed = kwargs.get("seed", 42)
         assert type(seed) is int, "Seed must be an integer."
         assert len(messages) == 1, "Only one message is allowed for this function."
 
         r = ""
-        for _ in range(num_retries):
-            try:
-                r = self._call(messages[0], seed=seed)
-                break
-            except Exception as e:
-                print(f"Error LLM Client call: {e} Retrying...")
-                time.sleep(waiting_time)
+        try:
+            r = self._call(messages[0])
+        except Exception as e:
+            print(f"Error LLM Client call: {e} Retrying...")
+            # time.sleep(waiting_time)
 
         if r == "":
             raise ValueError("Failed to get response from LLM Client.")

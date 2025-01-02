@@ -50,22 +50,7 @@ class Decompose:
         messages = self.llm_client.construct_message_list([user_input])
         for i in range(num_retries):
             response = self.llm_client.call(
-                messages=messages,
-                num_retries=1,
-                seed=42 + i,
-                schema=content.Schema(
-                    type = content.Type.OBJECT,
-                    enum = [],
-                    required = ["claims"],
-                    properties = {
-                    "claims": content.Schema(
-                        type = content.Type.ARRAY,
-                        items = content.Schema(
-                        type = content.Type.STRING,
-                        ),
-                    ),
-                    },
-                ),
+                messages=messages
             )
             try:
                 claims = eval(response)["claims"]
@@ -133,9 +118,7 @@ class Decompose:
         tmp_restore = {}
         for i in range(num_retries):
             response = self.llm_client.call(
-                messages=messages,
-                num_retries=1,
-                seed=42 + i,
+                messages=messages
             )
             try:
                 claim2doc = eval(response)

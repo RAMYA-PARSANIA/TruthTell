@@ -22,9 +22,9 @@ logger = CustomLogger(__name__).getlog()
 class FactCheck:
     def __init__(
         self,
-        default_model: str = "gemini-1.5-flash",
+        default_model: str = "llama-3.3-70b-versatile",
         client: str = None,
-        prompt: str = "gemini_prompt",
+        prompt: str = "llama_prompt",
         retriever: str = "serper",
         decompose_model: str = None,
         checkworthy_model: str = None,
@@ -53,7 +53,6 @@ class FactCheck:
 
         for key, _model_name in step_models.items():
             _model_name = default_model if _model_name is None else _model_name
-            print(f"== Init {key} with model: {_model_name}")
             if client is not None:
                 logger.info(f"== Use specified client: {client}")
                 LLMClient = CLIENTS[client]

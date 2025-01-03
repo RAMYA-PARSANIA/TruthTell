@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
 import "./Home.css";
@@ -40,13 +41,15 @@ const Home = () => {
         <p className="text-xl md:text-2xl mb-8">
           Real-Time Misinformation Detection System
         </p>
+        <Link to="/dashboard">
         <motion.button
           className="bg-fuchsia-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-fuchsia-700 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-        >
+          >
           Get Started
         </motion.button>
+        </Link>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16">

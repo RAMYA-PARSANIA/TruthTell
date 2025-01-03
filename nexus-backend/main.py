@@ -10,6 +10,8 @@ from kafka import KafkaConsumer
 import json
 import nest_asyncio
 nest_asyncio.apply()
+from pydantic import BaseModel
+from Gemini.final import get_gemini_analysis
 
 kafka_handler = None
 news_fetcher = None
@@ -69,3 +71,16 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+class NewsInput(BaseModel):
+    text: str
+
+@app.post("/analyze")
+async def analyze_news(news: NewsInput):
+    try:
+        gemini_analysis = get_gemini_analysis(news.text)
+        return {
+            "detailed_analysis": gemini_analysis
+        }
+    except Exception as e:
+        return {"error": str(e)}, 500

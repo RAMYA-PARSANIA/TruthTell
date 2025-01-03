@@ -341,6 +341,7 @@
 
 import React, { useState, memo } from 'react';
 import { FileCheck, Shield, Database, Newspaper, Search, CheckCircle, AlertTriangle, Lock, Unlock, MessageSquare } from 'lucide-react';
+import FactCheckStream from '../components/FactCheckStream';
 
 const AnimatedBackground = memo(() => {
   const backgroundIcons = [
@@ -564,6 +565,7 @@ const Dashboard = () => {
             )}
           </div>
         </div>
+        <FactCheckStream />
       </div>
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes floatRotate {

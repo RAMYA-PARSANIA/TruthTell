@@ -339,7 +339,7 @@
 
 // export default Dashboard;
 
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { FileCheck, Shield, Database, Newspaper, Search, CheckCircle, AlertTriangle, Lock, Unlock, MessageSquare } from 'lucide-react';
 import FactCheckStream from '../components/FactCheckStream';
 

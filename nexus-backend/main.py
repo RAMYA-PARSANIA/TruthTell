@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import Database
 from routes.auth import router as auth_router
@@ -12,6 +12,8 @@ import nest_asyncio
 nest_asyncio.apply()
 from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
+import os
+from tempfile import NamedTemporaryFile
 
 
 kafka_handler = None

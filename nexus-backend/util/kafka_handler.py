@@ -1,6 +1,5 @@
 from kafka import KafkaConsumer, KafkaProducer
 import json
-from factcheck import FactCheck
 from fc.fact_checker import FactChecker
 import os
 import dotenv

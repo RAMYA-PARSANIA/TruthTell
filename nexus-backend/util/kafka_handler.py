@@ -4,20 +4,21 @@ from factcheck import FactCheck
 from fc.fact_checker import FactChecker
 import os
 import dotenv
+import asyncio
 
 dotenv.load_dotenv()
 
 class KafkaHandler:
     def __init__(self):
         self.producer = KafkaProducer(
-            bootstrap_servers=['localhost:9091'],
+            bootstrap_servers=['localhost:9092'],
             value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         )
         self.consumer = KafkaConsumer(
             'news_input',
-            bootstrap_servers=['localhost:9091'],
+            bootstrap_servers=['localhost:9092'],
             value_deserializer=lambda x: json.loads(x.decode('utf-8')),
-            auto_offset_reset='earliest',  # This will read from the beginning
+            auto_offset_reset='latest',
             enable_auto_commit=True,
             group_id=None  # This ensures no offset tracking
         )
@@ -25,32 +26,38 @@ class KafkaHandler:
         self.factchecker = FactChecker(groq_api_key=os.getenv("GROQ_API_KEY"), serper_api_key=os.getenv("SERPER_API_KEY"))
 
     async def process_news(self):
-        print("Starting consumer...")
         try:
-            print("Trying...")
-            for message in self.consumer:
-                print("###############################################")
-                print(f"Received message: {message}")
-                print("###############################################")
-                news_text = message['text']
-                if not news_text or '[Removed]' in news_text:
-                    continue
-                print(f"Processing news text: {news_text}")
-                print("###############################################")
-                result = self.factchecker.check_text(news_text)
-                print(f"Result: {result}")
-                print("###############################################")
-                
-                # Send and flush the message
-                self.producer.send('factcheck_results', result)
-                self.producer.flush()  # Ensure the message is sent
-                
+            while True:  # Add loop to keep consumer running
+                try:
+                    message = await asyncio.to_thread(next, self.consumer)
+                    
+                    news_text = message.value['text']
+                    if not news_text or '[Removed]' in news_text:
+                        continue
+                    
+                    result = self.factchecker.generate_report(news_text['summary'])
+                                        
+                    # Send using asyncio
+                    await asyncio.to_thread(
+                        self.producer.send, 
+                        'factcheck_results', 
+                        {'result':result,
+                         'url': news_text['url'],
+                         'title': news_text['title'],
+                         'summary': news_text['summary']
+                         }
+                    )
+
+                    await asyncio.to_thread(self.producer.flush)
+                    await asyncio.sleep(60)
+                    
+                except Exception as e:
+                    print(f"Error processing message: {str(e)}")
+                    await asyncio.sleep(1)
+                    
         except Exception as e:
-            print("###############################################")
-            print(f"Error processing message: {str(e)}")
-            print("###############################################")
+            print(f"Consumer error: {str(e)}")
         finally:
-            # Clean shutdown
             self.producer.close()
 
 

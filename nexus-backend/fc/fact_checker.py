@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import requests
 from urllib.parse import quote
-from serper_search import SerperEvidenceRetriever
+from .serper_search import SerperEvidenceRetriever
 from google.ai.generativelanguage_v1beta.types import content
 import time
 
@@ -273,7 +273,7 @@ class FactChecker:
     def extract_claims(self, news_text: str) -> List[str]:
         prompt = {
             "role": "user",
-            "content": f"Break the following news into atomic claims. Return as JSON array of claim statements:\n\n{news_text}"
+            "content": f"Break the following news into atomic claims. Make a maximum of 3 claims, not more at all. Return as JSON array of claim statements:\n\n{news_text}"
         }
         
         response = self.client.chat.completions.create(
@@ -331,7 +331,7 @@ class FactChecker:
             temperature=0.2,
             response_format={"type": "json_object"}
         )
-        
+
         result = json.loads(analysis.choices[0].message.content)
         
         return Claim(
@@ -345,11 +345,15 @@ class FactChecker:
 
     def generate_report(self, news_text: str) -> Dict:
         claims = self.extract_claims(news_text)
+        print(len(claims))
         analyzed_claims = []
         for claim in claims:
             cl = ""
-            for tup in claim.items():
-                cl += tup[1] + " "
+            if type(claim) == str:
+                cl = claim
+            else:
+                for tup in claim.items():
+                    cl += tup[1] + " "
             analyzed_claims.append(self.analyze_claim(claim=cl))
 
         
@@ -427,10 +431,16 @@ class FactChecker:
         # Get additional correction sources for misinfo claims
         correction_sources = {}
         for claim in analyzed_claims:
-            if claim.verified_status.lower() in ['false', 'partially true']:
-                correction_query = f"fact check {claim.statement} reliable sources"
-                correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
-                correction_sources[claim.statement] = correction_results
+            if type(claim.verified_status) == str:    
+                if claim.verified_status.lower() in ['false', 'partially true']:
+                    correction_query = f"fact check {claim.statement} reliable sources"
+                    correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
+                    correction_sources[claim.statement] = correction_results
+            elif type(claim.verified_status) == bool:
+                if claim.verified_status == False:
+                    correction_query = f"fact check {claim.statement} reliable sources"
+                    correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
+                    correction_sources[claim.statement] = correction_results
 
         enhanced_report = self.gemini_client.generate_content(report_prompt)
         report_content = json.loads(enhanced_report.text)

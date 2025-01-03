@@ -197,10 +197,10 @@ logger = CustomLogger(__name__).getlog()
 
 
 class SerperEvidenceRetriever:
-    def __init__(self):
+    def __init__(self, api_key: str):
         """Initialize the SerperEvidenceRetrieve class"""
         self.lang = "en"
-        self.serper_key = os.getenv("SERPER_API_KEY")
+        self.serper_key = api_key
         
 
     def retrieve_evidence(self, claim_queries_dict, top_k: int = 3, snippet_extend_flag: bool = True):

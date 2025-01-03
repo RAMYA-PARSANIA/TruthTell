@@ -1,6 +1,11 @@
 from kafka import KafkaConsumer, KafkaProducer
 import json
 from factcheck import FactCheck
+from fc.fact_checker import FactChecker
+import os
+import dotenv
+
+dotenv.load_dotenv()
 
 class KafkaHandler:
     def __init__(self):
@@ -17,7 +22,7 @@ class KafkaHandler:
             group_id=None  # This ensures no offset tracking
         )
 
-        self.factchecker = FactCheck()
+        self.factchecker = FactChecker(groq_api_key=os.getenv("GROQ_API_KEY"), serper_api_key=os.getenv("SERPER_API_KEY"))
 
     async def process_news(self):
         print("Starting consumer...")

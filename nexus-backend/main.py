@@ -20,30 +20,7 @@ kafka_handler = None
 news_fetcher = None
 background_tasks = set()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Start up
-    await Database.connect_db()
-    global kafka_handler, news_fetcher, background_tasks
-    
-    kafka_handler = KafkaHandler()
-    news_fetcher = NewsFetcher()
-    
-    # Start background tasks
-    t1 = asyncio.create_task(news_fetcher.fetch_and_produce())
-    
-    t2 = asyncio.create_task(kafka_handler.process_news())
-
-    background_tasks.update([t1, t2])
-    
-    yield
-    # Shut down
-    for task in background_tasks:
-        task.cancel()
-    await asyncio.gather(*background_tasks, return_exceptions=True)
-    await Database.close_db()
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,11 +35,9 @@ app.include_router(auth_router, tags=["authentication"])
 @app.websocket("/ws/factcheck-stream")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    consumer = KafkaConsumer(
-        'factcheck_results',
-        bootstrap_servers=['localhost:9092'],
-        value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-    )
+
+    
+
     try:
         for message in consumer:
             await websocket.send_json(message.value)

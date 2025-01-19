@@ -15,6 +15,7 @@
     "@fontsource/press-start-2p": "^5.1.0",
     "@mui/icons-material": "^6.3.1",
     "@mui/material": "^6.3.1",
+    "@splinetool/react-spline": "^4.0.0",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.469.0",
     "mui": "^0.0.1",

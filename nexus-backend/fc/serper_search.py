@@ -216,6 +216,7 @@ class SerperEvidenceRetriever:
             i += len(queries)
         assert i == len(evidence_list)
         logger.info("Collect evidences done!")
+
         return claim_evidence_dict
 
     def _retrieve_evidence_4_all_claim(

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import requests
 from urllib.parse import quote
-from .serper_search import SerperEvidenceRetriever
+from serper_search import SerperEvidenceRetriever
 from google.ai.generativelanguage_v1beta.types import content
 import time
 
@@ -66,6 +66,7 @@ class FactChecker:
                 type = content.Type.ARRAY,
                 items = content.Schema(
                 type = content.Type.OBJECT,
+                required = ["claim", "verification_status", "confidence_level", "evidence_quality", "source_assessment", "misinformation_impact", "correction_suggestions"],
                 properties = {
                     "claim": content.Schema(
                     type = content.Type.STRING,
@@ -78,6 +79,7 @@ class FactChecker:
                     ),
                     "evidence_quality": content.Schema(
                     type = content.Type.OBJECT,
+                    required = ["strength", "gaps", "contradictions"],
                     properties = {
                         "strength": content.Schema(
                         type = content.Type.NUMBER,
@@ -100,12 +102,14 @@ class FactChecker:
                     type = content.Type.ARRAY,
                     items = content.Schema(
                         type = content.Type.OBJECT,
+                        required = ["url"],
                         properties = {
                         "url": content.Schema(
                             type = content.Type.STRING,
                         ),
                         "credibility_metrics": content.Schema(
                             type = content.Type.OBJECT,
+                            required = ["credibility_score", "bias_rating", "fact_checking_history"],
                             properties = {
                             "credibility_score": content.Schema(
                                 type = content.Type.NUMBER,
@@ -126,6 +130,7 @@ class FactChecker:
                     ),
                     "misinformation_impact": content.Schema(
                     type = content.Type.OBJECT,
+                    required = ["severity", "affected_domains", "potential_consequences", "spread_risk"],
                     properties = {
                         "severity": content.Schema(
                         type = content.Type.NUMBER,
@@ -149,6 +154,7 @@ class FactChecker:
                     ),
                     "correction_suggestions": content.Schema(
                     type = content.Type.OBJECT,
+                    required = ["verified_facts", "recommended_sources", "context_missing"],
                     properties = {
                         "verified_facts": content.Schema(
                         type = content.Type.ARRAY,
@@ -186,6 +192,7 @@ class FactChecker:
             ),
             "meta_analysis": content.Schema(
                 type = content.Type.OBJECT,
+                required = ["information_ecosystem_impact", "recommended_actions", "prevention_strategies"],
                 properties = {
                 "information_ecosystem_impact": content.Schema(
                     type = content.Type.STRING,
@@ -282,7 +289,43 @@ class FactChecker:
             temperature=0.2,
             response_format={"type": "json_object"}
         )
-        return json.loads(response.choices[0].message.content)["claims"]
+
+        gemini_extract_prompt = f"Break the following news into atomic claims. Make a maximum of 3 claims, not more at all. Return as JSON array of claim statements:\n\n{news_text}"
+
+        generation_config_extract = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_schema": content.Schema(
+            type = content.Type.OBJECT,
+            enum = [],
+            required = ["claims"],
+            properties = {
+            "claims": content.Schema(
+                type = content.Type.ARRAY,
+                items = content.Schema(
+                type = content.Type.STRING,
+                ),
+            ),
+            },
+        ),
+        "response_mime_type": "application/json",
+        }
+
+        model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config_extract,
+        )
+
+        chat_session = model.start_chat(
+        history=[
+        ]
+        )
+
+        response = chat_session.send_message(gemini_extract_prompt)
+
+        return json.loads(response.text)
 
     def generate_verification_questions(self, claim: str) -> List[str]:
         prompt = {
@@ -297,16 +340,52 @@ class FactChecker:
             response_format={"type": "json_object"}
         )
         
-        return json.loads(response.choices[0].message.content)["questions"]
+        gemini_questions_prompt = f"Generate specific questions to verify this claim. Make a maximum of 5 questions for the claim. Return as JSON array:\n\n{claim}"
+
+        generation_config_questions = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_schema": content.Schema(
+            type = content.Type.OBJECT,
+            enum = [],
+            required = ["questions"],
+            properties = {
+            "questions": content.Schema(
+                type = content.Type.ARRAY,
+                items = content.Schema(
+                type = content.Type.STRING,
+                ),
+            ),
+            },
+        ),
+        "response_mime_type": "application/json",
+        }
+
+        model_questions = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config_questions,
+        )
+
+        chat_session_questions = model_questions.start_chat(
+        history=[
+        ]
+        )
+
+        response = chat_session_questions.send_message(gemini_questions_prompt)
+
+
+        return json.loads(response.text)
 
     def search_evidence(self, query: str) -> List[Dict]:
         return self.search_client.retrieve_evidence(query)
 
     def analyze_claim(self, claim: str) -> Claim:
         # Generate verification questions
-        questions = self.generate_verification_questions(claim=claim)
+        questions = self.generate_verification_questions(claim=claim)["questions"]
 
-        claim_queries_dict = {claim: [q['question'] for q in questions]}
+        claim_queries_dict = {claim: [q for q in questions]}
 
         evidence_dict = self.search_client.retrieve_evidence(claim_queries_dict=claim_queries_dict)
         
@@ -319,21 +398,61 @@ class FactChecker:
                 evidences.append(evidence_item['text'])
                 sources.append(evidence_item['url'])
         
-        # Analyze evidence using Groq
-        analysis_prompt = {
-            "role": "user",
-            "content": f"Analyze this claim and evidence. Return JSON with confidence_score (1-100), verified_status (True/False/Partially True/Unverifiable), and worthiness_score (1-10):\n\nClaim: {claim}\n\nEvidence: {json.dumps(evidence)}"
-        }
+        # # Analyze evidence using Groq
+        # analysis_prompt = {
+        #     "role": "user",
+        #     "content": f"Analyze this claim and evidence. Return JSON with confidence_score (1-100), verified_status (True/False/Partially True/Unverifiable), and worthiness_score (1-10):\n\nClaim: {claim}\n\nEvidence: {json.dumps(evidence)}"
+        # }
         
-        analysis = self.client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[analysis_prompt],
-            temperature=0.2,
-            response_format={"type": "json_object"}
+        # analysis = self.client.chat.completions.create(
+        #     model="llama-3.3-70b-versatile",
+        #     messages=[analysis_prompt],
+        #     temperature=0.2,
+        #     response_format={"type": "json_object"}
+        # )
+
+        # result = json.loads(analysis.choices[0].message.content)
+        
+        gemini_analysis_prompt = f"Analyze this claim and evidence. Return JSON with confidence_score - integer - from 1-100, verified_status - an integer in the range 0-100, and worthiness_score, an integer ranging from 1-100:\n\nClaim: {claim}\n\nEvidence: {json.dumps(evidence)}"
+
+        generation_config_analysis = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_schema": content.Schema(
+            type = content.Type.OBJECT,
+            enum = [],
+            required = ["confidence_score", "verified_status", "worthiness_score"],
+            properties = {
+            "confidence_score": content.Schema(
+                type = content.Type.INTEGER,
+            ),
+            "verified_status": content.Schema(
+                type = content.Type.INTEGER,
+            ),
+            "worthiness_score": content.Schema(
+                type = content.Type.INTEGER,
+            ),
+            },
+        ),
+        "response_mime_type": "application/json",
+        }
+
+        model_analysis = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config_analysis,
         )
 
-        result = json.loads(analysis.choices[0].message.content)
-        
+        chat_session_analysis = model_analysis.start_chat(
+        history=[
+        ]
+        )
+
+        response = chat_session_analysis.send_message(gemini_analysis_prompt)
+
+        result = json.loads(response.text)
+
         return Claim(
             statement=claim,
             confidence_score=result["confidence_score"],
@@ -345,18 +464,19 @@ class FactChecker:
 
     def generate_report(self, news_text: str) -> Dict:
         claims = self.extract_claims(news_text)
-        print(len(claims))
         analyzed_claims = []
-        for claim in claims:
-            cl = ""
-            if type(claim) == str:
-                cl = claim
-            else:
-                for tup in claim.items():
-                    cl += tup[1] + " "
-            analyzed_claims.append(self.analyze_claim(claim=cl))
+        # for claim in claims:
+        #     cl = ""
+        #     if type(claim) == str:
+        #         cl = claim
+        #     else:
+        #         for tup in claim.items():
+        #             cl += tup[1] + " "
+        #     analyzed_claims.append(self.analyze_claim(claim=cl))
 
-        
+        for claim in claims["claims"]:
+            analyzed_claims.append(self.analyze_claim(claim=claim))
+
         # # Source credibility analysis
         # source_ratings = {}
         # for claim in analyzed_claims:
@@ -377,72 +497,47 @@ class FactChecker:
         # #sleep for one minute
         # time.sleep(60)
 
-        report_prompt = f"""Generate a comprehensive fact-check analysis report for the following claims and evidence. 
-        Return a detailed JSON with the following structure:
+        report_prompt = f"""Generate a comprehensive fact-check analysis report for the following claims and evidence. Structure your analysis according to these sections:
 
-        {{
-            "overall_analysis": {{
-                "truth_score": float,
-                "reliability_assessment": string,
-                "key_findings": [string],
-                "patterns_identified": [string]
-            }},
-            "claim_analysis": [{{
-                "claim": string,
-                "verification_status": string,
-                "confidence_level": float,
-                "evidence_quality": {{
-                    "strength": float,
-                    "gaps": [string],
-                    "contradictions": [string]
-                }},
-                "source_assessment": [{{
-                    "url": string,
-                    "credibility_metrics": object,
-                    "relevance_to_claim": float
-                }}],
-                "misinformation_impact": {{
-                    "severity": float,
-                    "affected_domains": [string],
-                    "potential_consequences": [string],
-                    "spread_risk": float
-                }},
-                "correction_suggestions": {{
-                    "verified_facts": [string],
-                    "recommended_sources": [{{
-                        "url": string,
-                        "credibility_score": float,
-                        "relevance": float
-                    }}],
-                    "context_missing": [string]
-                }}
-            }}],
-            "meta_analysis": {{
-                "information_ecosystem_impact": string,
-                "recommended_actions": [string],
-                "prevention_strategies": [string]
-            }}
-        }}
+        1. Overall Analysis:
+        - Calculate an aggregate truth score (0-100) based on all claims
+        - Provide a detailed reliability assessment explaining major patterns
+        - List key findings that emerge from analyzing all claims together
+        - Identify recurring patterns in misinformation/disinformation if any
 
-        Claims and Evidence: {json.dumps([vars(claim) for claim in analyzed_claims])}
-        
+        2. Claim-by-Claim Analysis:
+        For each claim in: {json.dumps([vars(claim) for claim in analyzed_claims])}
+        - Evaluate verification status with specific reasoning
+        - Assign confidence level based on evidence strength
+        - Analyze evidence quality:
+        * Evaluate evidence strength
+        * Identify information gaps
+        * Note any contradictions in sources
+        - Assess sources:
+        * Evaluate credibility metrics
+        * Check for bias patterns
+        * Review fact-checking history
+
+        3. Meta Analysis:
+        - Assess potential impact on information ecosystem
+        - Suggest specific actions for correction/prevention
+        - Recommend strategies to prevent spread of misinformation
+
+        Please be specific and provide numerical scores where applicable. Include direct quotes from evidence when relevant.
         """
+
+
         # Source Ratings: {json.dumps(source_ratings)}
         # Get additional correction sources for misinfo claims
         correction_sources = {}
-        for claim in analyzed_claims:
-            if type(claim.verified_status) == str:    
-                if claim.verified_status.lower() in ['false', 'partially true']:
-                    correction_query = f"fact check {claim.statement} reliable sources"
-                    correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
-                    correction_sources[claim.statement] = correction_results
-            elif type(claim.verified_status) == bool:
-                if claim.verified_status == False:
-                    correction_query = f"fact check {claim.statement} reliable sources"
-                    correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
-                    correction_sources[claim.statement] = correction_results
-
+        for claim in analyzed_claims:    
+            if claim.verified_status < 50:
+                correction_query = f"fact check {claim.statement} reliable sources"
+                correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
+                correction_sources[claim.statement] = correction_results
+            
         enhanced_report = self.gemini_client.generate_content(report_prompt)
+
         report_content = json.loads(enhanced_report.text)
             # "source_credibility": source_ratings,
         

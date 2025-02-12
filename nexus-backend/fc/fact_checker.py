@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import requests
 from urllib.parse import quote
-from serper_search import SerperEvidenceRetriever
+from .serper_search import SerperEvidenceRetriever
 from google.ai.generativelanguage_v1beta.types import content
 import time
 

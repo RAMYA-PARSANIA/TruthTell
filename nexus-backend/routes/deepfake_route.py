@@ -15,7 +15,7 @@ deepfake_router = APIRouter()
 
 class DeepfakeDetector:
     def __init__(self):
-        model_path = "deepfake_detector.h5"
+        model_path = "C:/Users/satya/Downloads/TruthTell/nexus-backend/deepfake2/deepfake_detector.h5"
         self.model = load_model(model_path)
         self.img_height = 128
         self.img_width = 128
@@ -117,8 +117,7 @@ detector = DeepfakeDetector()
 
 @deepfake_router.post("/analyze-deepfake")
 async def analyze_image(
-    file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user)
+    file: UploadFile = File(...)
 ):
     try:
         # Create a temporary file to store the uploaded image

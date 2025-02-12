@@ -5,7 +5,7 @@ from routes.auth import router as auth_router
 from routes.deepfake_route import deepfake_router
 from contextlib import asynccontextmanager
 from util.kafka_handler import KafkaHandler
-from util.newsfetcher import NewsFetcher
+# from util.newsfetcher import NewsFetcher
 import asyncio
 from kafka import KafkaConsumer
 import json

@@ -7,7 +7,6 @@
 ![](https://img.shields.io/badge/PyTorch-Machine%20Learning-red?logo=pytorch)
 ![](https://img.shields.io/badge/BERT-NLP%20Model-lightblue)
 ![](https://img.shields.io/badge/Apache%20Kafka-Real--Time%20Processing-black?logo=apache-kafka)
-![](https://img.shields.io/badge/Neo4j-Knowledge%20Graph-green?logo=neo4j)
 <!-- ![](https://img.shields.io/badge/AWS-Cloud%20Deployment-orange?logo=amazon-aws) -->
 ![](https://img.shields.io/badge/Docker-Containerization-blue?logo=docker)
 ![](https://img.shields.io/badge/Machine%20Learning-Advanced%20AI-blueviolet)

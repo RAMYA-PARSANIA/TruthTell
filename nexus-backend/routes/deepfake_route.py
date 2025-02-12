@@ -15,7 +15,7 @@ deepfake_router = APIRouter()
 
 class DeepfakeDetector:
     def __init__(self):
-        model_path = "C:/Users/satya/Downloads/TruthTell/nexus-backend/deepfake2/deepfake_detector.h5"
+        model_path = "C:/ForKrishna/forKrishnaFolder/TruthTell/nexus-backend/deepfake2/deepfake_detector.h5"
         self.model = load_model(model_path)
         self.img_height = 128
         self.img_width = 128
@@ -124,7 +124,7 @@ async def analyze_image(
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
             contents = await file.read()
             temp_file.write(contents)
-            temp_file_path = "C:/Users/satya/Downloads/data_deepfake/Dataset/Test/Fake/fake_98.jpg"#temp_file.name
+            temp_file_path = "C:/Users/kveli/Downloads/wallpaper_opps_phone.png"#temp_file.name
 
         # Analyze the image
         results = await detector.analyze_image(temp_file_path)

@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import Database
 from routes.auth import router as auth_router
+from routes.deepfake_route import deepfake_router
 from contextlib import asynccontextmanager
 from util.kafka_handler import KafkaHandler
 from util.newsfetcher import NewsFetcher
@@ -31,13 +32,11 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, tags=["authentication"])
+app.include_router(deepfake_router, tags=["deepfake"])
 
 @app.websocket("/ws/factcheck-stream")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-
-    
-
     try:
         for message in consumer:
             await websocket.send_json(message.value)

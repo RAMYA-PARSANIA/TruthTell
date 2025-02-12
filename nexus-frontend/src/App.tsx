@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DeepfakeDetection from './pages/deepfake';
+import DeepfakeDetection from "./pages/deepfake";
 import "./App.css";
 
 // Import your page components

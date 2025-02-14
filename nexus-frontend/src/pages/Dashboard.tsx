@@ -1,6 +1,7 @@
 import RealtimeNews from "@/components/RealtimeNews";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserInput from "@/components/UserInput";
+import DeepfakeDetection from "./deepfake";
 
 export default function Dashboard() {
   return (
@@ -36,9 +37,7 @@ export default function Dashboard() {
               <RealtimeNews />
             </TabsContent>
             <TabsContent value="deepfake-detection">
-              <div className="text-gray-400">
-                Deepfake detection module coming soon
-              </div>
+              <DeepfakeDetection />
             </TabsContent>
             <TabsContent value="user-based">
               <div className="text-gray-400">

@@ -62,23 +62,3 @@ async def analyze_news(news: NewsInput):
     except Exception as e:
         return {"error": str(e)}, 500
     
-@app.post("/detect-deepfake")
-async def detect_deepfake(image: UploadFile = File(...)):
-    try:
-        # Save uploaded image temporarily
-        with NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
-            contents = await image.read()
-            temp_file.write(contents)
-            temp_file_path = temp_file.name
-
-        # Use your existing deepfake detection function
-        from deepfake2.testing2 import test_image  # Use your existing function
-        result = test_image(temp_file_path)
-        
-        # Clean up temp file
-        os.remove(temp_file_path)
-        
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}, 500

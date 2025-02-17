@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -8,7 +9,111 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+//Interface for news object
+interface NewsObject {
+  newsObjs : {
+    id: string;
+    article: string;
+    full_text: { 
+        status: string,
+        summary: string,
+        keywords: string,
+        title: string,
+        text: string,
+        url: string
+    };
+    fact_check: {
+      timestamp: number,
+      original_text: string,
+      detailed_analysis: {
+        overall_analysis: {
+          truth_score: number,
+          reliability_assessment: string,
+          key_findings: string[],
+          patterns_identified: string[]
+        },
+        claim_analysis: {
+          claim: string,
+          verification_status: string,
+          confidence_level: number,
+          evidence_quality :{
+            strength: number,
+            gaps: string[],
+            contradictions: string[],
+          },
+          source_assessment: {
+            url: string,
+            credibility_metrics: {
+              credibility_score: number,
+              bias_rating: string,
+              fact_checking_history: number
+            },
+            relevance_to_claim: number
+          }[],
+          misinformation_impact: {
+            severity: number,
+            affected_domains: string[],
+            potential_consequences: string[],
+            spread_risk: number,
+          },
+          correction_suggestions: {
+            verified_facts: string[],
+            recommended_sources: {
+              url: string,
+              credibility_score: number,
+              relevance: number
+            }[],
+            context_missing: string[],
+          },
+        }[],
+        meta_analysis: {
+          information_ecosystem_impact: string,
+          recommended_actors: string[],
+          prevention_strategies: string[],
+        },
+      },
+    };
+  }[]
+}
+
+
 const RealtimeNews = () => {
+  //NewsObject state
+  const [news, setNews] = useState<NewsObject>({
+    newsObjs: [],
+  });
+  const api_url = import.meta.env.VITE_NEWS_API_URL;
+  
+  useEffect(() => {
+    const ws = new WebSocket(api_url);
+
+    ws.onopen = () => {
+      console.log('Connected to news WebSocket');
+    };
+    
+    ws.onmessage = (event) => {
+        const newsData = JSON.parse(event.data);
+        setNews(newsData);
+        console.log("Got news");
+        console.log(newsData);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('Disconnected from news WebSocket');
+    };
+
+    // Cleanup on component unmount
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [])
+  
   const dummyNews = [
     {
       id: 1,
@@ -42,6 +147,7 @@ const RealtimeNews = () => {
     },
   ];
 
+  
   const dummyResults = [
     {
       id: 1,

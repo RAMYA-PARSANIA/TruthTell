@@ -79,26 +79,26 @@ class DeepfakeDetector:
         results = {}
         
         cnn_prediction = self.predict_image(img_path)
-        results["CNN Prediction"] = cnn_prediction
+        results["CNN_Prediction"] = cnn_prediction
         cnn_score = 1 if cnn_prediction == "Fake" else 0
         
         metadata_result = self.check_metadata(img_path)
-        results["Metadata Analysis"] = metadata_result
+        results["Metadata_Analysis"] = metadata_result
         metadata_score = 1 if "Fake" in metadata_result else 0
         
         artifact_result = self.analyze_artifacts(img_path)
-        results["Artifact Analysis"] = artifact_result
+        results["Artifact_Analysis"] = artifact_result
         artifact_score = 1 if "Fake" in artifact_result else 0
         
         noise_result = self.detect_noise_patterns(img_path)
-        results["Noise Pattern Analysis"] = noise_result
+        results["Noise_Pattern_Analysis"] = noise_result
         noise_score = 1 if "Fake" in noise_result else 0
         
         symmetry_results = self.calculate_symmetry(img_path)
-        results["Symmetry Analysis"] = symmetry_results
+        results["Symmetry_Analysis"] = symmetry_results
         
-        vertical_symmetry = symmetry_results.get("Vertical Symmetry", 0)
-        horizontal_symmetry = symmetry_results.get("Horizontal Symmetry", 0)
+        vertical_symmetry = symmetry_results.get("Vertical_Symmetry", 0)
+        horizontal_symmetry = symmetry_results.get("Horizontal_Symmetry", 0)
         symmetry_score = 0
         if vertical_symmetry != "Unknown" and horizontal_symmetry != "Unknown":
             if vertical_symmetry > 0.9 or horizontal_symmetry > 0.9:
@@ -108,8 +108,8 @@ class DeepfakeDetector:
                       artifact_score * 0.15 + noise_score * 0.15 +
                       symmetry_score * 0.2)
                       
-        results["Final Prediction"] = "Fake" if total_score > 0.5 else "Real"
-        results["Confidence Score"] = round(total_score, 2)
+        results["Final_Prediction"] = "Fake" if total_score > 0.5 else "Real"
+        results["Confidence_Score"] = round(total_score, 2)
         
         return results
 
@@ -124,13 +124,16 @@ async def analyze_image(
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
             contents = await file.read()
             temp_file.write(contents)
-            temp_file_path = "C:/Users/kveli/Downloads/wallpaper_opps_phone.png"#temp_file.name
+            temp_file_path = temp_file.name
 
         # Analyze the image
         results = await detector.analyze_image(temp_file_path)
         
         # Clean up the temporary file
         os.unlink(temp_file_path)
+        
+        # print the results
+        print(results)
         
         return {"status": "success", "results": results}
     

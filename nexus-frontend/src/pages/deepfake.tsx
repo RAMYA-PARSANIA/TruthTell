@@ -7,13 +7,16 @@ import { Progress } from "@/components/ui/progress";
 import { Upload, AlertCircle } from "lucide-react";
 
 interface DetectionResult {
-  probability: number;
-  classification: string;
-  metadata: {
-    timestamp: string;
-    file_hash: string;
-    processing_time: number;
+  CNN_Prediction: string;
+  Metadata_Analysis: string;
+  Artifact_Analyis: string;
+  Noise_Pattern_Analysis: string;
+  Symmetry_Analysis: {
+    Vertical_Symmetry: number;
+    Horizontal_Symmetry: number;
   };
+  Final_Prediction: string;
+  Confidence_Score: number;
 }
 
 export default function DeepfakeDetection() {
@@ -68,7 +71,9 @@ export default function DeepfakeDetection() {
       }
 
       const data = await response.json();
-      setResult(data);
+      console.log("Results: ")
+      console.log(data.results.Confidence_Score);
+      setResult(data.results);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "An unexpected error occurred"
@@ -93,7 +98,7 @@ export default function DeepfakeDetection() {
               type="file"
               accept="image/jpeg,image/png,video/mp4"
               onChange={handleFileSelect}
-              className="max-w-sm bg-slate-900 border-slate-800 text-slate-50"
+              className="max-w-sm bg-slate-100 hover:bg-slate-700 text-slate-50 py-2 px-4 rounded"
             />
 
             {selectedFile && (
@@ -142,35 +147,48 @@ export default function DeepfakeDetection() {
           {result && (
             <div className="space-y-4">
               <Alert
-                variant={result.probability > 0.5 ? "destructive" : "default"}
+                variant={result.Confidence_Score > 0.5 ? "destructive" : "default"}
                 className={
-                  result.probability > 0.5
+                  result.Confidence_Score > 0.5
                     ? "bg-red-900 border-red-800"
                     : "bg-green-900 border-green-800"
                 }
               >
                 <AlertTitle className="text-slate-50">
-                  {result.probability > 0.5
+                  {result.Confidence_Score > 0.5
                     ? "Potential deepfake detected"
                     : "No deepfake detected"}
                 </AlertTitle>
-                <AlertDescription className="text-slate-200">
-                  Probability: {(result.probability * 100).toFixed(2)}%
-                </AlertDescription>
+                { /*<AlertDescription className="text-slate-200">
+                  Probability: {(result.Confidence_Score * 100)}%
+                </AlertDescription>*/ }
               </Alert>
-
+            
               <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
-                <h3 className="font-semibold text-slate-50">
-                  Detection Results
-                </h3>
-                <p className="text-slate-200">
-                  Classification: {result.classification}
-                </p>
-                <p className="text-sm text-slate-400">
-                  Processing Time: {result.metadata.processing_time.toFixed(2)}s
-                </p>
+                <h3 className="font-semibold text-slate-50">Detection Results</h3>
+                <p className="text-slate-200">Classification: {result.Final_Prediction}</p>
               </div>
-            </div>
+            
+              <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+                <h3 className="font-semibold text-slate-50">CNN Analysis</h3>
+                <p className="text-slate-200">Result: {result.CNN_Prediction}</p>
+              </div>
+            
+              <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+                <h3 className="font-semibold text-slate-50">Metadata Analysis</h3>
+                <p className="text-slate-200">Findings: {result.Metadata_Analysis}</p>
+              </div>
+            
+            
+              <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+                <h3 className="font-semibold text-slate-50">Noise Pattern Analysis</h3>
+                <p className="text-slate-200">Results: {result.Noise_Pattern_Analysis}</p>
+              </div>
+            
+              
+          </div>
+          
+            
           )}
         </CardContent>
       </Card>

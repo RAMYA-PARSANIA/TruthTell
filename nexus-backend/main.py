@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
 import os
 from tempfile import NamedTemporaryFile
+from routes.news_fetch import news_router
 
 
 kafka_handler = None
@@ -33,6 +34,7 @@ app.add_middleware(
 
 app.include_router(auth_router, tags=["authentication"])
 app.include_router(deepfake_router, tags=["deepfake"])
+app.include_router(news_router, tags=["news"])
 
 @app.websocket("/ws/factcheck-stream")
 async def websocket_endpoint(websocket: WebSocket):

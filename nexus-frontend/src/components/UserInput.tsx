@@ -24,7 +24,7 @@ export default function UserInput() {
       <h1 className="text-3xl font-bold mb-8">Content Verification</h1>
 
       <Tabs defaultValue="text" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 gap-4 mb-8 bg-gray-900 p-3 rounded-lg h-auto">
+        <TabsList className="grid w-full grid-cols-2 gap-8 mb-8 bg-gray-900 p-6 rounded-lg h-auto">
           <TabsTrigger
             value="text"
             className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
@@ -36,18 +36,6 @@ export default function UserInput() {
             className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
           >
             News URL
-          </TabsTrigger>
-          <TabsTrigger
-            value="twitter"
-            className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
-          >
-            Twitter Link
-          </TabsTrigger>
-          <TabsTrigger
-            value="instagram"
-            className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
-          >
-            Instagram Link
           </TabsTrigger>
         </TabsList>
 
@@ -66,23 +54,6 @@ export default function UserInput() {
               className="bg-gray-900 border-gray-800 text-white"
             />
           </TabsContent>
-
-          <TabsContent value="twitter">
-            <Input
-              placeholder="Enter Twitter post URL..."
-              type="url"
-              className="bg-gray-900 border-gray-800 text-white"
-            />
-          </TabsContent>
-
-          <TabsContent value="instagram">
-            <Input
-              placeholder="Enter Instagram post URL..."
-              type="url"
-              className="bg-gray-900 border-gray-800 text-white"
-            />
-          </TabsContent>
-
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700"

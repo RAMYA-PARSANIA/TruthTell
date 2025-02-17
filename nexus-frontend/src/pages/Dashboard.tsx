@@ -11,12 +11,18 @@ export default function Dashboard() {
           Nexus of Truth Dashboard
         </h1>
         <Tabs defaultValue="realtime-news" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
+          <TabsList className="grid w-full grid-cols-4 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
             <TabsTrigger
               value="realtime-news"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
               Realtime News Checking
+            </TabsTrigger>
+            <TabsTrigger
+              value="nlp-model"
+              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
+            >
+              NLP Model 
             </TabsTrigger>
             <TabsTrigger
               value="deepfake-detection"
@@ -42,6 +48,18 @@ export default function Dashboard() {
             <TabsContent value="user-based">
               <div className="text-gray-400">
                 <UserInput />
+              </div>
+            </TabsContent>
+            <TabsContent value="nlp-model">
+              <div className="w-full h-[800px]">
+                <iframe
+                  src="https://heheboi0769-nexus-nlp-model.hf.space/"
+                  className="w-full h-full"
+                  frameBorder="0"
+                  title="TruthTell NLP Model"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                />
               </div>
             </TabsContent>
           </div>

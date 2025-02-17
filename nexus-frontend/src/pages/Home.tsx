@@ -1,32 +1,32 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
-import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
+// import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
 import "./Home.css";
 import Spline from '@splinetool/react-spline';
 
 const Home = () => {
-  const features = [
-    {
-      icon: <FaBolt className="text-4xl text-fuchsia-500" />,
-      title: "Real-Time Detection",
-      description: "Instant fact-checking during live broadcasts",
-    },
-    {
-      icon: <FaBrain className="text-4xl text-fuchsia-500" />,
-      title: "AI-Powered Analysis",
-      description: "Advanced machine learning for accurate verification",
-    },
-    {
-      icon: <FaDatabase className="text-4xl text-fuchsia-500" />,
-      title: "Knowledge Graph",
-      description: "Comprehensive fact database with Neo4j",
-    },
-    {
-      icon: <FaCheckCircle className="text-4xl text-fuchsia-500" />,
-      title: "Truth Detection",
-      description: "Sophisticated NLP for misinformation detection",
-    },
-  ];
+  // const features = [
+  //   {
+  //     icon: <FaBolt className="text-4xl text-fuchsia-500" />,
+  //     title: "Real-Time Detection",
+  //     description: "Instant fact-checking during live broadcasts",
+  //   },
+  //   {
+  //     icon: <FaBrain className="text-4xl text-fuchsia-500" />,
+  //     title: "AI-Powered Analysis",
+  //     description: "Advanced machine learning for accurate verification",
+  //   },
+  //   {
+  //     icon: <FaDatabase className="text-4xl text-fuchsia-500" />,
+  //     title: "Knowledge Graph",
+  //     description: "Comprehensive fact database with Neo4j",
+  //   },
+  //   {
+  //     icon: <FaCheckCircle className="text-4xl text-fuchsia-500" />,
+  //     title: "Truth Detection",
+  //     description: "Sophisticated NLP for misinformation detection",
+  //   },
+  // ];
 
   // return (
   //   <div className="min-h-screen retro-theme p-8">
@@ -112,7 +112,7 @@ const Home = () => {
         <div className="fixed inset-0 -z-10">
           <Spline scene="https://prod.spline.design/X6jdVTy-ZKbG6qTK/scene.splinecode" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -129,7 +129,7 @@ const Home = () => {
               <p className="text-center text-sm text-white">{feature.description}</p>
             </motion.div>
           ))}
-        </div>
+        </div> */}
   
         <motion.div
           className="text-center my-16 relative z-10"
@@ -141,11 +141,11 @@ const Home = () => {
             Powered by Advanced Technology
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            {["Python", "TensorFlow", "PyTorch", "BERT", "Kafka", "Neo4j"].map(
+          {["TensorFlow", "PyTorch", "BERT", "Real-time broadcasting", "NLP", "Python", "React", "Fact-check API"].map(
               (tech, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-fuchsia-600 text-white rounded-full text-sm"
+                  className="px-4 py-2 bg-[#3737bd] text-white rounded-full text-sm"
                 >
                   {tech}
                 </span>

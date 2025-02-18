@@ -79,9 +79,9 @@ interface NewsObject {
 
 const RealtimeNews = () => {
   //NewsObject state
-  const [news, setNews] = useState<NewsObject>({
-    newsObjs: [],
-  });
+  const [news, setNews] = useState<NewsObject['newsObjs']>([]);
+  const [selectedClaims, setSelectedClaims] = useState<any>(null);
+  const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   const api_url = import.meta.env.VITE_NEWS_API_URL;
   
   useEffect(() => {
@@ -91,11 +91,16 @@ const RealtimeNews = () => {
       console.log('Connected to news WebSocket');
     };
     
+    
     ws.onmessage = (event) => {
         const newsData = JSON.parse(event.data);
-        setNews(newsData);
+        setNews(prevNews => {
+          const updatedNews = [...prevNews, ...newsData.content];
+          // Keep only the latest 10 items
+          return updatedNews.slice(-10);
+      });
         console.log("Got news");
-        console.log(newsData);
+        console.log(news);
     };
 
     ws.onerror = (error) => {
@@ -114,158 +119,168 @@ const RealtimeNews = () => {
     };
   }, [])
   
-  const dummyNews = [
-    {
-      id: 1,
-      title: "Breaking: Major earthquake hits California",
-      content: "A 7.1 magnitude earthquake has struck...",
-      url: "https://example.com/news/1",
-    },
-    {
-      id: 2,
-      title: "New study shows coffee may extend lifespan",
-      content: "Researchers at a leading university have found...",
-      url: "https://example.com/news/2",
-    },
-    {
-      id: 3,
-      title: "Tech giant announces revolutionary AI breakthrough",
-      content: "In a surprise announcement, the CEO revealed...",
-      url: "https://example.com/news/3",
-    },
-    {
-      id: 4,
-      title: "Global leaders gather for climate change summit",
-      content: "Representatives from over 190 countries...",
-      url: "https://example.com/news/4",
-    },
-    {
-      id: 5,
-      title: "Rare astronomical event visible tonight",
-      content: "Stargazers are in for a treat as...",
-      url: "https://example.com/news/5",
-    },
-  ];
-
-  
-  const dummyResults = [
-    {
-      id: 1,
-      title: "Earthquake report confirmed by USGS",
-      status: "Verified",
-      details:
-        "The United States Geological Survey has confirmed the occurrence of a 7.1 magnitude earthquake in California. Multiple seismological stations recorded the event, and the epicenter has been precisely located. Local authorities have initiated emergency response protocols.",
-    },
-    {
-      id: 2,
-      title: "Coffee study needs further peer review",
-      status: "Inconclusive",
-      details:
-        "While the study shows promising results regarding coffee consumption and longevity, several experts in the field have called for further peer review. The sample size and methodology have been questioned, and replication studies are needed to confirm the findings.",
-    },
-    {
-      id: 3,
-      title: "AI claims exaggerated, experts say",
-      status: "Misleading",
-      details:
-        "Independent AI researchers have questioned the claims made by the tech giant. While the announced AI system does show improvements in certain tasks, the term 'revolutionary breakthrough' is considered an overstatement. The system's capabilities are more incremental than revolutionary.",
-    },
-    {
-      id: 4,
-      title: "Climate summit attendance verified",
-      status: "Verified",
-      details:
-        "Official records confirm the attendance of representatives from 192 countries at the global climate change summit. The summit's agenda and key discussion points have been corroborated by multiple reliable sources, including official government statements and UN reports.",
-    },
-    {
-      id: 5,
-      title: "Astronomical event confirmed by NASA",
-      status: "Verified",
-      details:
-        "NASA's official Twitter account has posted confirmation of the rare astronomical event. Several observatories around the world have also provided data supporting the occurrence. Amateur astronomers have successfully captured images of the event, further verifying its authenticity.",
-    },
-  ];
-
   return (
     <div className="space-y-4 mt-10 bg-black text-white">
       <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
         <div className="flex w-max space-x-4 p-4">
-          {dummyNews.map((news) => (
-            <Card
-              key={news.id}
-              className="w-[300px] shrink-0 bg-gray-900 border-gray-800"
-            >
-              <CardHeader>
-                <CardTitle className="text-sm line-clamp-2 text-white">
-                  <a
-                    href={news.url}
-                    target="_blank"
+          {news.map((newsItems) => (
+            <Dialog key={newsItems.id}>
+              <DialogTrigger asChild>
+                <Card
+                  className="w-[300px] shrink-0 bg-gray-900 border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors"
+                >
+                  <CardHeader className="h-auto">
+                    <CardTitle className="text-sm text-white break-words whitespace-normal">
+                      <span className="hover:text-blue-400">
+                        {newsItems.full_text.title}
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <a 
+                      href={newsItems.full_text.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      Original Article
+                    </a>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
+                    {newsItems.full_text.title}
+                  </DialogTitle>
+                  <h3 className="text-lg font-semibold text-emerald-400 mb-3">Source</h3>
+                  <a 
+                    href={newsItems.full_text.url} 
+                    target="_blank" 
                     rel="noopener noreferrer"
-                    className="hover:underline hover:text-blue-400"
+                    className="text-blue-400 hover:underline"
                   >
-                    {news.title}
+                    Original Article
                   </a>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-gray-400 line-clamp-3">
-                  {news.content}
-                </p>
-              </CardContent>
-            </Card>
+                  <div className="mt-4 space-y-6">
+                    <div className="text-sm text-gray-200">
+                      <h3 className="text-lg font-semibold text-emerald-400 mb-3">Summary</h3>
+                      <p>{newsItems.full_text.summary}</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-200">
+                    <div className="text-sm text-gray-200">
+                      <h3 className="text-lg font-semibold text-emerald-400 mb-3">Full Article</h3>
+                      <p className="whitespace-pre-wrap">{newsItems.full_text.text}</p>
+                    </div>
+                  </div>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
         <ScrollBar orientation="horizontal" className="bg-gray-800" />
       </ScrollArea>
-
+  
       <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
         <div className="flex w-max space-x-4 p-4">
-          {dummyResults.map((result) => (
-            <Dialog key={result.id}>
+          {news.map((newsItems) => (
+            <Dialog key={newsItems.id}>
               <DialogTrigger asChild>
                 <Card className="w-[300px] shrink-0 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
                   <CardHeader>
                     <CardTitle className="text-sm line-clamp-2 text-white">
-                      {result.title}
+                      {newsItems.full_text.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                      <p
+                        className={`text-sm font-semibold mb-2 ${
+                          newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
+                            ? "text-emerald-400"
+                            : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
+                            ? "text-amber-400"
+                            : "text-rose-400"
+                        }`}
+                      >
+                        Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
+                      </p>
+                      <p className="text-sm text-gray-200 line-clamp-1">
+                        Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
+                      </p>
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-200">Key Findings:</p>
+                        <ul className="list-disc pl-4 text-xs text-gray-400">
+                          {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.slice(0, 2).map((finding, index) => (
+                            <li key={index} className="line-clamp-1">{finding}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-200">Patterns:</p>
+                        <ul className="list-disc pl-4 text-xs text-gray-400">
+                          {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.slice(0, 2).map((pattern, index) => (
+                            <li key={index} className="line-clamp-1">{pattern}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
+                    {newsItems.full_text.title}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="mt-4">
+                  <div className="space-y-2">
                     <p
                       className={`text-sm font-semibold mb-2 ${
-                        result.status === "Verified"
+                        newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
                           ? "text-emerald-400"
-                          : result.status === "Inconclusive"
+                          : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
                           ? "text-amber-400"
                           : "text-rose-400"
                       }`}
                     >
-                      {result.status}
+                      Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
                     </p>
-                    <p className="text-xs text-gray-400 line-clamp-3">
-                      {result.details}
+                    <p className="text-sm text-gray-200">
+                      Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
                     </p>
-                  </CardContent>
-                </Card>
-              </DialogTrigger>
-              <DialogContent className="bg-gray-900 border-gray-800 text-white">
-                <DialogHeader>
-                  <DialogTitle className="text-white">
-                    {result.title}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="mt-4">
-                  <p
-                    className={`text-sm font-semibold mb-2 ${
-                      result.status === "Verified"
-                        ? "text-emerald-400"
-                        : result.status === "Inconclusive"
-                        ? "text-amber-400"
-                        : "text-rose-400"
-                    }`}
-                  >
-                    {result.status}
-                  </p>
-                  <p className="text-sm text-gray-400">{result.details}</p>
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-gray-200">Key Findings:</p>
+                      <ul className="list-disc pl-4 text-xs text-gray-400">
+                        {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
+                          <li key={index}>{finding}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-gray-200">Patterns Identified:</p>
+                      <ul className="list-disc pl-4 text-xs text-gray-400">
+                        {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.map((pattern, index) => (
+                          <li key={index}>{pattern}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+  
+                  <div className="mt-6">
+                    <button 
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      onClick={() => {
+                        setSelectedClaims(newsItems.fact_check.detailed_analysis.claim_analysis);
+                        setShowClaimsDialog(true);
+                      }}
+                    >
+                      View Detailed Claim Analysis
+                    </button>
+                  </div>
+  
                 </div>
               </DialogContent>
             </Dialog>
@@ -273,8 +288,87 @@ const RealtimeNews = () => {
         </div>
         <ScrollBar orientation="horizontal" className="bg-gray-800" />
       </ScrollArea>
+  
+      <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-blue-400">
+              Claim Analysis
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <ul className="space-y-4">
+              {selectedClaims?.map((claim: any, index: number) => (
+                <li key={index}>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="w-full text-left p-3 bg-gray-800 rounded-md hover:bg-gray-700 transition-colors">
+                        <p className="font-medium text-white">{claim.claim}</p>
+                        <p className={`text-sm mt-1 ${
+                          claim.verification_status === "Verified" 
+                            ? "text-emerald-400" 
+                            : claim.verification_status === "Partially Verified" 
+                            ? "text-amber-400" 
+                            : "text-rose-400"
+                        }`}>
+                          {claim.verification_status} - Confidence: {claim.confidence_level}
+                        </p>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-900 border-gray-800 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-blue-400">Detailed Claim Analysis</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-emerald-400 font-medium mb-2">Evidence Quality</h4>
+                          <p className="text-gray-200">Strength: {claim.evidence_quality.strength}</p>
+                          <div className="mt-2">
+                            <p className="text-gray-400">Gaps:</p>
+                            <ul className="list-disc pl-4 text-gray-300">
+                              {claim.evidence_quality.gaps.map((gap: string, i: number) => (
+                                <li key={i}>{gap}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="text-emerald-400 font-medium mb-2">Source Assessment</h4>
+                          <ul className="space-y-2">
+                            {claim.source_assessment.map((source: any, i: number) => (
+                              <li key={i} className="bg-gray-800 p-2 rounded">
+                                <a href={source.url} className="text-blue-400 hover:underline">{source.url}</a>
+                                <p className="text-sm text-gray-300">Credibility: {source.credibility_metrics.credibility_score}</p>
+                                <p className="text-sm text-gray-300">Bias: {source.credibility_metrics.bias_rating}</p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="text-emerald-400 font-medium mb-2">Misinformation Impact</h4>
+                          <p className="text-gray-200">Severity: {claim.misinformation_impact.severity}</p>
+                          <p className="text-gray-200">Spread Risk: {claim.misinformation_impact.spread_risk}</p>
+                          <div className="mt-2">
+                            <p className="text-gray-400">Potential Consequences:</p>
+                            <ul className="list-disc pl-4 text-gray-300">
+                              {claim.misinformation_impact.potential_consequences.map((consequence: string, i: number) => (
+                                <li key={i}>{consequence}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+  
 };
 
 export default RealtimeNews;

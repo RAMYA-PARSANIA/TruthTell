@@ -8,16 +8,37 @@ import { Loader2 } from "lucide-react";
 
 export default function UserInput() {
   const [isLoading, setIsLoading] = useState(false);
+  const [inputType, setInputType] = useState("text");
+  const [inputValue, setInputValue] = useState("");
+  const api_url = import.meta.env.VITE_API_URL;
   const [result, setResult] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      setResult("Analysis complete: This content appears to be reliable.");
+    
+    const endpoint = inputType === "url" ? "get-fc-url" : "get-fc-text";
+    
+    try {
+      const response = await fetch(`${api_url}/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          [inputType]: inputValue
+        }),
+      });
+  
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      setResult("Error analyzing content. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
+  
 
   return (
     <div className="container mx-auto p-8 bg-black text-white min-h-screen">
@@ -27,12 +48,20 @@ export default function UserInput() {
         <TabsList className="grid w-full grid-cols-2 gap-8 mb-8 bg-gray-900 p-6 rounded-lg h-auto">
           <TabsTrigger
             value="text"
+            onClick={() => {
+              setInputType("text");
+              setInputValue("");
+            }}
             className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
           >
             Text Input
           </TabsTrigger>
           <TabsTrigger
             value="url"
+            onClick={() => {
+              setInputType("url");
+              setInputValue("");
+            }}
             className="p-2 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
           >
             News URL
@@ -42,6 +71,8 @@ export default function UserInput() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <TabsContent value="text">
             <Textarea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder="Enter the news or text to verify..."
               className="bg-gray-900 border-gray-800 text-white min-h-[200px] resize-none"
             />
@@ -49,6 +80,8 @@ export default function UserInput() {
 
           <TabsContent value="url">
             <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder="Enter news article URL..."
               type="url"
               className="bg-gray-900 border-gray-800 text-white"

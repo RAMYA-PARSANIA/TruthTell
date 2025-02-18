@@ -186,15 +186,110 @@ const RealtimeNews = () => {
     },
   ];
 
-  return (
-    <div className="space-y-4 mt-10 bg-black text-white">
-      <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
-        <div className="flex w-max space-x-4 p-4">
-          {dummyNews.map((news) => (
-            <Card
-              key={news.id}
-              className="w-[300px] shrink-0 bg-gray-900 border-gray-800"
-            >
+//   return (
+//     <div className="space-y-4 mt-10 bg-black text-white">
+//       <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
+//         <div className="flex w-max space-x-4 p-4">
+//           {dummyNews.map((news) => (
+//             <Card
+//               key={news.id}
+//               className="w-[300px] shrink-0 bg-gray-900 border-gray-800"
+//             >
+//               <CardHeader>
+//                 <CardTitle className="text-sm line-clamp-2 text-white">
+//                   <a
+//                     href={news.url}
+//                     target="_blank"
+//                     rel="noopener noreferrer"
+//                     className="hover:underline hover:text-blue-400"
+//                   >
+//                     {news.title}
+//                   </a>
+//                 </CardTitle>
+//               </CardHeader>
+//               <CardContent>
+//                 <p className="text-xs text-gray-400 line-clamp-3">
+//                   {news.content}
+//                 </p>
+//               </CardContent>
+//             </Card>
+//           ))}
+//         </div>
+//         <ScrollBar orientation="horizontal" className="bg-gray-800" />
+//       </ScrollArea>
+
+//       <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
+//         <div className="flex w-max space-x-4 p-4">
+//           {dummyResults.map((result) => (
+//             <Dialog key={result.id}>
+//               <DialogTrigger asChild>
+//                 <Card className="w-[300px] shrink-0 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
+//                   <CardHeader>
+//                     <CardTitle className="text-sm line-clamp-2 text-white">
+//                       {result.title}
+//                     </CardTitle>
+//                   </CardHeader>
+//                   <CardContent>
+//                     <p
+//                       className={`text-sm font-semibold mb-2 ${
+//                         result.status === "Verified"
+//                           ? "text-emerald-400"
+//                           : result.status === "Inconclusive"
+//                           ? "text-amber-400"
+//                           : "text-rose-400"
+//                       }`}
+//                     >
+//                       {result.status}
+//                     </p>
+//                     <p className="text-xs text-gray-400 line-clamp-3">
+//                       {result.details}
+//                     </p>
+//                   </CardContent>
+//                 </Card>
+//               </DialogTrigger>
+//               <DialogContent className="bg-gray-900 border-gray-800 text-white">
+//                 <DialogHeader>
+//                   <DialogTitle className="text-white">
+//                     {result.title}
+//                   </DialogTitle>
+//                 </DialogHeader>
+//                 <div className="mt-4">
+//                   <p
+//                     className={`text-sm font-semibold mb-2 ${
+//                       result.status === "Verified"
+//                         ? "text-emerald-400"
+//                         : result.status === "Inconclusive"
+//                         ? "text-amber-400"
+//                         : "text-rose-400"
+//                     }`}
+//                   >
+//                     {result.status}
+//                   </p>
+//                   <p className="text-sm text-gray-400">{result.details}</p>
+//                 </div>
+//               </DialogContent>
+//             </Dialog>
+//           ))}
+//         </div>
+//         <ScrollBar orientation="horizontal" className="bg-gray-800" />
+//       </ScrollArea>
+//     </div>
+//   );
+// };
+
+return (
+  <div className="space-y-4 mt-10 bg-black text-white">
+    {/* Column Headers */}
+    <ScrollArea className="w-full h-[800px] rounded-md border border-gray-800">
+    <div className="flex px-4 pt-4 mb-2">
+      <h2 className="w-1/2 text-xl font-bold text-white text-center">NEWS</h2>
+      <h2 className="w-1/2 text-xl font-bold text-white text-center">VERIFICATION</h2>
+    </div>
+      <div className="p-4 space-y-4">
+        {dummyNews.map((news, index) => (
+          <div key={news.id} className="flex space-x-4">
+            {/* News Card */}
+            <Card className="w-1/2 bg-gray-900 border-gray-800">
               <CardHeader>
                 <CardTitle className="text-sm line-clamp-2 text-white">
                   <a
@@ -213,36 +308,28 @@ const RealtimeNews = () => {
                 </p>
               </CardContent>
             </Card>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" className="bg-gray-800" />
-      </ScrollArea>
 
-      <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
-        <div className="flex w-max space-x-4 p-4">
-          {dummyResults.map((result) => (
-            <Dialog key={result.id}>
+            {/* Results Card */}
+            <Dialog>
               <DialogTrigger asChild>
-                <Card className="w-[300px] shrink-0 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
+                <Card className="w-1/2 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
                   <CardHeader>
                     <CardTitle className="text-sm line-clamp-2 text-white">
-                      {result.title}
+                      {dummyResults[index].title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p
-                      className={`text-sm font-semibold mb-2 ${
-                        result.status === "Verified"
-                          ? "text-emerald-400"
-                          : result.status === "Inconclusive"
-                          ? "text-amber-400"
-                          : "text-rose-400"
-                      }`}
-                    >
-                      {result.status}
+                    <p className={`text-sm font-semibold mb-2 ${
+                      dummyResults[index].status === "Verified"
+                        ? "text-emerald-400"
+                        : dummyResults[index].status === "Inconclusive"
+                        ? "text-amber-400"
+                        : "text-rose-400"
+                    }`}>
+                      {dummyResults[index].status}
                     </p>
                     <p className="text-xs text-gray-400 line-clamp-3">
-                      {result.details}
+                      {dummyResults[index].details}
                     </p>
                   </CardContent>
                 </Card>
@@ -250,31 +337,29 @@ const RealtimeNews = () => {
               <DialogContent className="bg-gray-900 border-gray-800 text-white">
                 <DialogHeader>
                   <DialogTitle className="text-white">
-                    {result.title}
+                    {dummyResults[index].title}
                   </DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
-                  <p
-                    className={`text-sm font-semibold mb-2 ${
-                      result.status === "Verified"
-                        ? "text-emerald-400"
-                        : result.status === "Inconclusive"
-                        ? "text-amber-400"
-                        : "text-rose-400"
-                    }`}
-                  >
-                    {result.status}
+                  <p className={`text-sm font-semibold mb-2 ${
+                    dummyResults[index].status === "Verified"
+                      ? "text-emerald-400"
+                      : dummyResults[index].status === "Inconclusive"
+                      ? "text-amber-400"
+                      : "text-rose-400"
+                  }`}>
+                    {dummyResults[index].status}
                   </p>
-                  <p className="text-sm text-gray-400">{result.details}</p>
+                  <p className="text-sm text-gray-400">{dummyResults[index].details}</p>
                 </div>
               </DialogContent>
             </Dialog>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" className="bg-gray-800" />
-      </ScrollArea>
-    </div>
-  );
+          </div>
+        ))}
+      </div>
+      <ScrollBar orientation="vertical" className="bg-gray-800" />
+    </ScrollArea>
+  </div>
+);
 };
-
 export default RealtimeNews;

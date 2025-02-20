@@ -25,7 +25,7 @@ export default function UserInput() {
     setResult(withWhat);
   };
   useEffect(() => {
-    console.log("Result updated:", result);
+    // console.log("Result updated:", result);
   }, [result]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,18 +48,16 @@ export default function UserInput() {
       const data: UserInputOutput = await response.json();
 
       const res: UserInputObject = data.content;
-      console.log(res);
 
-      console.log("Result before set: " + result);
       setResult((prevResult) => {
         if (prevResult) {
-          console.log("Result before update: " + prevResult);
+          // console.log("Result before update: " + prevResult);
         }
-        console.log("Result after update: " + res);
+        // console.log("Result after update: " + res);
         return res;
       });
 
-      console.log("Result: " + result);
+      // console.log("Result: " + result);
     } catch (error) {
       // Handle error
       console.error("Error:", error);
@@ -67,9 +65,9 @@ export default function UserInput() {
       setIsLoading(false);
     }
   };
-  console.log("Result outside: " + result);
+  // console.log("Result outside: " + result);
   if (!result && isLoading) {
-    return <div>LOADING HOGA SHAYAD</div>;
+    return <div>LOADING RIGHT NOW</div>;
   }
 
   return (

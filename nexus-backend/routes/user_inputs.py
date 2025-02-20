@@ -24,7 +24,6 @@ input_router = APIRouter()
 @input_router.post("/get-fc-url")
 async def get_fc_url(input_data: UrlInput):
     try:
-        print(input_data.url)
         news_text = get_news(input_data.url)
       
         if news_text['status'] == 'error':

@@ -9,14 +9,15 @@ from contextlib import asynccontextmanager
 import asyncio
 from kafka import KafkaConsumer
 import json
-import nest_asyncio
-nest_asyncio.apply()
+# import nest_asyncio
+# nest_asyncio.apply()
 from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
 import os
 from tempfile import NamedTemporaryFile
 from routes.news_fetch import news_router
 from routes.user_inputs import input_router
+import uvicorn
 
 
 @asynccontextmanager
@@ -62,4 +63,12 @@ async def analyze_news(news: NewsInput):
         }
     except Exception as e:
         return {"error": str(e)}, 500
+    
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # Default to 8000 if PORT isn't set
+    uvicorn.run(app, host="0.0.0.0", port=port)
     

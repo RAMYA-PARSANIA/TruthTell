@@ -1,32 +1,32 @@
 // import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
-// import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
+import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
 import "./Home.css";
 import Spline from '@splinetool/react-spline';
 
 const Home = () => {
-  // const features = [
-  //   {
-  //     icon: <FaBolt className="text-4xl text-fuchsia-500" />,
-  //     title: "Real-Time Detection",
-  //     description: "Instant fact-checking during live broadcasts",
-  //   },
-  //   {
-  //     icon: <FaBrain className="text-4xl text-fuchsia-500" />,
-  //     title: "AI-Powered Analysis",
-  //     description: "Advanced machine learning for accurate verification",
-  //   },
-  //   {
-  //     icon: <FaDatabase className="text-4xl text-fuchsia-500" />,
-  //     title: "Knowledge Graph",
-  //     description: "Comprehensive fact database with Neo4j",
-  //   },
-  //   {
-  //     icon: <FaCheckCircle className="text-4xl text-fuchsia-500" />,
-  //     title: "Truth Detection",
-  //     description: "Sophisticated NLP for misinformation detection",
-  //   },
-  // ];
+  const features = [
+    {
+      icon: <FaBolt className="text-4xl text-fuchsia-500" />,
+      title: "Real-Time Detection",
+      description: "Instant fact-checking during live broadcasts",
+    },
+    {
+      icon: <FaBrain className="text-4xl text-fuchsia-500" />,
+      title: "AI-Powered Analysis",
+      description: "Advanced machine learning for accurate verification",
+    },
+    {
+      icon: <FaDatabase className="text-4xl text-fuchsia-500" />,
+      title: "Knowledge Graph",
+      description: "Comprehensive fact database with Neo4j",
+    },
+    {
+      icon: <FaCheckCircle className="text-4xl text-fuchsia-500" />,
+      title: "Truth Detection",
+      description: "Sophisticated NLP for misinformation detection",
+    },
+  ];
 
   // return (
   //   <div className="min-h-screen retro-theme p-8">
@@ -112,7 +112,7 @@ const Home = () => {
         <div className="fixed inset-0 -z-10">
           <Spline scene="https://prod.spline.design/X6jdVTy-ZKbG6qTK/scene.splinecode" />
         </div>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -129,7 +129,7 @@ const Home = () => {
               <p className="text-center text-sm text-white">{feature.description}</p>
             </motion.div>
           ))}
-        </div> */}
+        </div>
   
         <motion.div
           className="text-center my-16 relative z-10"

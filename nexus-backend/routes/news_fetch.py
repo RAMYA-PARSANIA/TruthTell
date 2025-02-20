@@ -47,7 +47,6 @@ async def websocket_endpoint(websocket: WebSocket):
 @news_router.post("/get-fc-url")
 async def get_fc_url(input_data: UrlInput):
     try:
-        print("In get_fc_url")
         news_text = get_news(input_data.url)
         
         if news_text['status'] == 'error':
@@ -82,7 +81,6 @@ async def get_fc_url(input_data: UrlInput):
 @news_router.post("/get-fc-text")
 async def get_fc_text(input_data: TextInput):
     try:
-        print("In get_fc_text")
         fact_checker = FactChecker(groq_api_key=os.getenv("GROQ_API_KEY"), serper_api_key=os.getenv("SERPER_API_KEY"))
         # Run fact check - it will be run through transformation pipeline
         fact_check_result = fact_checker.generate_report(input_data.text)
@@ -97,7 +95,7 @@ async def get_fc_text(input_data: TextInput):
         return {
             "status": "success",
             "content": {
-                "news_text": text,
+                "news_text": input_data.text,
                 "fact_check_result": fact_check_result,
                 "explanation": explanation,
                 "viz_data": viz_data

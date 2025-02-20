@@ -19,53 +19,54 @@ class NewsFetcher:
         
     async def fetch_and_produce(self):
         try:
-            news = self.newsapi.get_top_headlines(language='en', page=5, page_size=1)
-
-            print("#"*50)
-            print(f"News: {news}")
-            print("#"*60)
-            
-            if not news['articles']:
-                return {
-                    "status": "error",
-                    "content": None
-                }
-            
+            page = 1
             final_articles = []
             
-            for article in news["articles"]:
-                url = article['url']
-                if url in self.fetched_pages:
-                    continue
-                
-                self.fetched_pages.append(url)
+            while len(final_articles) < 5:  # Fetch until we have at least 5 unique articles
+                news = self.newsapi.get_top_headlines(language='en', page=page, page_size=5)
 
-                # Get full text
-                news_text = get_news(url)
-                if news_text['status'] == 'error':
-                    continue
+                print("#"*50)
+                print(f"News: {news}")
+                print("#"*60)
                 
-                # Run fact check - it will be run through transformation pipeline
-                fact_check_result = self.fact_checker.generate_report(news_text['text'])
+                if not news['articles']:
+                    break
                 
-                
-                explanation = explain_factcheck_result(fact_check_result)
+                for article in news["articles"]:
+                    url = article['url']
+                    if url in self.fetched_pages:
+                        continue
+                    
+                    self.fetched_pages.append(url)
 
-                # Get visualization data
-                viz_data = generate_visual_explanation(explanation["explanation"])
-            
-                # Create article object with unique ID
-                article_object = {
-                    "id": str(uuid.uuid4()),
-                    "article": article,
-                    "full_text": news_text,
-                    "fact_check": fact_check_result,
-                    "explanation": explanation,
-                    "visualization": viz_data
-                }
-                print("ARTICLE ID: " + article_object["id"])
+                    # Get full text
+                    news_text = get_news(url)
+                    if news_text['status'] == 'error':
+                        continue
+                    
+                    # Run fact check - it will be run through transformation pipeline
+                    fact_check_result = self.fact_checker.generate_report(news_text['text'])
+                    
+                    
+                    explanation = explain_factcheck_result(fact_check_result)
+
+                    # Get visualization data
+                    viz_data = generate_visual_explanation(explanation["explanation"])
                 
-                final_articles.append(article_object)
+                    # Create article object with unique ID
+                    article_object = {
+                        "id": str(uuid.uuid4()),
+                        "article": article,
+                        "full_text": news_text,
+                        "fact_check": fact_check_result,
+                        "explanation": explanation,
+                        "visualization": viz_data
+                    }
+                    print("ARTICLE ID: " + article_object["id"])
+                    
+                    final_articles.append(article_object)
+
+                page += 1  # Move to the next page
 
             return {
                 "status": "success",

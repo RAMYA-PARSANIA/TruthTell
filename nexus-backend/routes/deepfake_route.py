@@ -15,7 +15,7 @@ deepfake_router = APIRouter()
 
 class DeepfakeDetector:
     def __init__(self):
-        model_path = "C:/ForKrishna/forKrishnaFolder/TruthTell/nexus-backend/deepfake2/deepfake_detector.h5"
+        model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "deepfake2", "deepfake_detector.h5")
         self.model = load_model(model_path)
         self.img_height = 128
         self.img_width = 128

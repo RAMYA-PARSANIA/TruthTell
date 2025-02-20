@@ -36,16 +36,6 @@ app.include_router(auth_router, tags=["authentication"])
 app.include_router(deepfake_router, tags=["deepfake"])
 app.include_router(news_router, tags=["news"])
 
-@app.websocket("/ws/factcheck-stream")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        for message in consumer:
-            await websocket.send_json(message.value)
-    except Exception as e:
-        print(f"WebSocket error: {e}")
-    finally:
-        await websocket.close()
 
 @app.get("/health")
 async def health_check():

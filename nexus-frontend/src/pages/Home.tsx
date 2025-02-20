@@ -102,8 +102,8 @@ const Home = () => {
       <div className="h-screen">
         <Spline scene="https://prod.spline.design/gbC1n3NsKQP9dZdE/scene.splinecode" />
       </div>
-  
-      <motion.div 
+
+      <motion.div
         className="p-8 relative"
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -112,25 +112,7 @@ const Home = () => {
         <div className="fixed inset-0 -z-10">
           <Spline scene="https://prod.spline.design/X6jdVTy-ZKbG6qTK/scene.splinecode" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="p-6 rounded-xl border border-[#a54c72] bg-opacity-5 bg-white backdrop-blur-sm"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.2 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="flex justify-center mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold mb-2 text-center text-white">
-                {feature.title}
-              </h3>
-              <p className="text-center text-sm text-white">{feature.description}</p>
-            </motion.div>
-          ))}
-        </div>
-  
+
         <motion.div
           className="text-center my-16 relative z-10"
           initial={{ opacity: 0 }}
@@ -141,7 +123,7 @@ const Home = () => {
             Powered by Advanced Technology
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-          {["TensorFlow", "PyTorch", "BERT", "Real-time broadcasting", "NLP", "Python", "React", "Fact-check API"].map(
+            {["TensorFlow", "PyTorch", "BERT", "Real-time broadcasting", "NLP", "Python", "React", "Fact-check API"].map(
               (tech, index) => (
                 <span
                   key={index}
@@ -151,12 +133,29 @@ const Home = () => {
                 </span>
               )
             )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 my-16 relative z-10">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="p-6 rounded-xl border border-[#a54c72] bg-opacity-5 bg-white backdrop-blur-sm"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.2 }}
+                >
+                  <div className="flex justify-center mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-bold mb-2 text-center text-white">
+                    {feature.title}
+                  </h3>
+                  <p className="text-center text-sm text-white">{feature.description}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.div>
       </motion.div>
     </div>
   );
-  
+
 };
 
 export default Home;

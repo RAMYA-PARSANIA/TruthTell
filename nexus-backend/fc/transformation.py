@@ -48,5 +48,5 @@ def handler(factcheck_data):
     #     with open(filename, 'w', encoding='utf-8') as f:
     #         json.dump(report, f, indent=2)
         
-    #     print(f"Report saved to {filename}")
+    #     #print(f"Report saved to {filename}")
     #     time.sleep(90)

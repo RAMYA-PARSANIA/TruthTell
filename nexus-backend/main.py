@@ -16,13 +16,21 @@ from Gemini.final import get_gemini_analysis
 import os
 from tempfile import NamedTemporaryFile
 from routes.news_fetch import news_router
+from routes.user_inputs import input_router
 
 
-kafka_handler = None
-news_fetcher = None
-background_tasks = set()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Create background tasks set
+    background_tasks = set()
+    yield
+    # Shutdown: Clean up tasks
+    for task in background_tasks:
+        task.cancel()
 
-app = FastAPI()
+# Update FastAPI initialization to use lifespan
+app = FastAPI(lifespan=lifespan)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,6 +43,7 @@ app.add_middleware(
 app.include_router(auth_router, tags=["authentication"])
 app.include_router(deepfake_router, tags=["deepfake"])
 app.include_router(news_router, tags=["news"])
+app.include_router(input_router, tags=["user_inputs"])
 
 
 @app.get("/health")

@@ -73,6 +73,35 @@ interface NewsObject {
         },
       },
     };
+    explanation: {
+      explanation_summary: string,
+      claim_explanations: {
+        claim: string,
+        reasoning: string,
+        key_factors: string[],
+        confidence_explanation: string,
+      }[],
+      evidence_analysis: {
+        strength_explanation: string,
+        gap_analysis: string,
+        contradiction_details: string,
+      },
+      trust_factors: {
+        factor: string,
+        impact: string,
+        recommendation: string,
+      }[]
+    };
+    visualization: {
+      confidence_breakdown: {
+        claim: string,
+        factors: string[]
+      }[],
+      decision_path: {
+        claim: string,
+        reasoning_steps: string[],
+      }[]
+    };
   }[]
 }
 

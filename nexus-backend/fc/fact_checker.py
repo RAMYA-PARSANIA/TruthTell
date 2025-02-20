@@ -102,7 +102,7 @@ class FactChecker:
                     type = content.Type.ARRAY,
                     items = content.Schema(
                         type = content.Type.OBJECT,
-                        required = ["url"],
+                        required = ["url", "credibility_metrics", "relevance_to_claim"],
                         properties = {
                         "url": content.Schema(
                             type = content.Type.STRING,
@@ -529,12 +529,12 @@ class FactChecker:
 
         # Source Ratings: {json.dumps(source_ratings)}
         # Get additional correction sources for misinfo claims
-        correction_sources = {}
-        for claim in analyzed_claims:    
-            if claim.verified_status < 50:
-                correction_query = f"fact check {claim.statement} reliable sources"
-                correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
-                correction_sources[claim.statement] = correction_results
+        # correction_sources = {}
+        # for claim in analyzed_claims:    
+        #     if claim.verified_status < 50:
+        #         correction_query = f"fact check {claim.statement} reliable sources"
+        #         correction_results = self.search_client.retrieve_evidence({claim.statement: [correction_query]})
+        #         correction_sources[claim.statement] = correction_results
             
         enhanced_report = self.gemini_client.generate_content(report_prompt)
 
@@ -545,5 +545,5 @@ class FactChecker:
             "timestamp": datetime.now().isoformat(),
             "original_text": news_text,
             "detailed_analysis": report_content,
-            "correction_sources": correction_sources
         }
+            # "correction_sources": correction_sources

@@ -393,4 +393,4 @@ if __name__ == "__main__":
     retriever = SerperEvidenceRetriever(api_config)
 
     result = retriever._request_serper_api(["Apple", "IBM"])
-    print(result.json())
+    #print(result.json())

@@ -246,24 +246,24 @@ def get_gemini_analysis(text):
 #########################
 
 def main():
-    print("Welcome to the News Classifier!")
-    print("Enter your news text below. Type 'Exit' to quit.")
+    #print("Welcome to the News Classifier!")
+    #print("Enter your news text below. Type 'Exit' to quit.")
     
     while True:
         news_text = input("\nEnter news text: ")
         
         if news_text.lower() == 'exit':
-            print("Thank you for using the News Classifier!")
+            #print("Thank you for using the News Classifier!")
             return
             
         # First get ML and Knowledge Graph prediction
         prediction = predict_news(news_text)
-        print(f"\nML and Knowledge Graph Analysis: {prediction}")
+        #print(f"\nML and Knowledge Graph Analysis: {prediction}")
         
         # Then get Gemini analysis
-        print("\n=== Detailed Gemini Analysis ===")
+        #print("\n=== Detailed Gemini Analysis ===")
         gemini_result = get_gemini_analysis(news_text)
-        print(gemini_result)
+        #print(gemini_result)
 
 
 if __name__ == "__main__":

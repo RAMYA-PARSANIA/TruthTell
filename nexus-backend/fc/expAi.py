@@ -100,8 +100,6 @@ def generate_visual_explanation(explanation: Dict) -> Dict:
     """
     visualization_data = {
         "confidence_breakdown": [],
-        "evidence_strength_map": [],
-        "trust_factor_metrics": [],
         "decision_path": []
     }
     

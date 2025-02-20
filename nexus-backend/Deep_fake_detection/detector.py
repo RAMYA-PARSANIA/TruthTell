@@ -15,7 +15,7 @@ class DeepFakeDetector:
         """
         from facenet_pytorch import MTCNN
         dev = 'cuda' if torch.cuda.is_available() else 'cpu'
-        print(dev)
+        #print(dev)
         return MTCNN(
             image_size=224,
             margin=40,

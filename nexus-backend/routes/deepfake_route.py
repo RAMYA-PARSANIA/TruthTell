@@ -132,8 +132,8 @@ async def analyze_image(
         # Clean up the temporary file
         os.unlink(temp_file_path)
         
-        # print the results
-        print(results)
+        # #print the results
+        #print(results)
         
         return {"status": "success", "results": results}
     

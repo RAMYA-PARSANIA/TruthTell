@@ -42,4 +42,4 @@ def get_news(url):
 # stringB = "https://apnews.com/article/biden-citizens-medals-jan-6-cheney-thompson-f725b7003ea11239b90962a8cf0d5305"
 # res = get_news(stringB)
 
-# print(res["text"])
+# #print(res["text"])

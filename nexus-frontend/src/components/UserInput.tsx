@@ -119,22 +119,23 @@ export default function UserInput() {
               className="bg-gray-900 border-gray-800 text-white"
             />
           </TabsContent>
-          <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
-            Verify Content
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              className="w-64 bg-blue-600 hover:bg-blue-700 mx-auto"
+              disabled={isLoading}
+              >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              Verify Content
+            </Button>
+          </div>
         </form>
       </Tabs>
 
       {/* Replace the existing result display with this: */}
       {(isLoading || result) && (
-        <Card className="mt-8 bg-gray-900 border-gray-800">
           <CardContent className="pt-6">
             {isLoading ? (
               <div className="flex items-center justify-center space-x-2">
@@ -322,7 +323,6 @@ export default function UserInput() {
               </Dialog>
             )}
           </CardContent>
-        </Card>
       )}
     </div>
   );

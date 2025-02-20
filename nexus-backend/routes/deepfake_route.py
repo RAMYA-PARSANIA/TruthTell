@@ -112,6 +112,50 @@ class DeepfakeDetector:
         results["Confidence_Score"] = round(total_score, 2)
         
         return results
+    
+    async def predict_video(self, video_path):
+        try:
+            cap = cv2.VideoCapture(video_path)
+            fake_count, real_count = 0, 0
+            total_frames = 0
+            results = {}
+
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break
+
+                if total_frames % 5 == 0:
+                    frame_path = f"temp_frame_{total_frames}.jpg"
+                    cv2.imwrite(frame_path, frame)
+                    
+                    frame_results = await self.analyze_image(frame_path)
+                    if frame_results["Final_Prediction"] == "Fake":
+                        fake_count += 1
+                    else:
+                        real_count += 1
+                        
+                    os.remove(frame_path)
+                
+                total_frames += 1
+
+            cap.release()
+
+            total_analyzed_frames = fake_count + real_count
+            fake_percentage = (fake_count / total_analyzed_frames * 100) if total_analyzed_frames > 0 else 0
+            
+            results["Total_Frames_Analyzed"] = total_analyzed_frames
+            results["Fake_Frames"] = fake_count
+            results["Real_Frames"] = real_count
+            results["Fake_Percentage"] = round(fake_percentage, 2)
+            results["Final_Prediction"] = "Fake" if fake_percentage > 50 else "Real"
+            results["Confidence_Score"] = round(abs(50 - fake_percentage) / 50, 2)
+            
+            return results
+
+        except Exception as e:
+            return {"Error": f"Error analyzing video: {str(e)}"}
+
 
 detector = DeepfakeDetector()
 
@@ -141,4 +185,26 @@ async def analyze_image(
         # Clean up the temporary file if it exists
         if 'temp_file_path' in locals():
             os.unlink(temp_file_path)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@deepfake_router.post("/analyze-video")
+async def analyze_video(file: UploadFile = File(...)):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
+            contents = await file.read()
+            temp_file.write(contents)
+            temp_file_path = temp_file.name
+
+        # Process video frames
+        results = await detector.predict_video(temp_file_path)
+        
+        # Clean up
+        os.unlink(temp_file_path)
+        
+        return {"status": "success", "results": results}
+    
+    except Exception as e:
+        if 'temp_file_path' in locals():
+            os.unlink(temp_file_path)
+        print(f"Video analysis error: {str(e)}")  # Add logging
         raise HTTPException(status_code=500, detail=str(e))

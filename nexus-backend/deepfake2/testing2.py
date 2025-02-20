@@ -24,6 +24,53 @@ def predict_image(img_path):
     prediction = model.predict(img_array)
     return "Fake" if prediction[0][0] > 0.5 else "Real"
 
+def predict_video(video_path):
+    """Predict whether a video is real or fake by analyzing frames."""
+    try:
+        cap = cv2.VideoCapture(video_path)
+        fake_count, real_count = 0, 0
+        total_frames = 0
+        results = {}
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Process every 5th frame to improve performance
+            if total_frames % 5 == 0:
+                # Analyze frame using all detection methods
+                frame_path = f"temp_frame_{total_frames}.jpg"
+                cv2.imwrite(frame_path, frame)
+                
+                frame_results = combined_prediction(frame_path)
+                if frame_results["Final Prediction"] == "Fake":
+                    fake_count += 1
+                else:
+                    real_count += 1
+                    
+                os.remove(frame_path)
+            
+            total_frames += 1
+
+        cap.release()
+
+        # Calculate final results
+        total_analyzed_frames = fake_count + real_count
+        fake_percentage = (fake_count / total_analyzed_frames * 100) if total_analyzed_frames > 0 else 0
+        
+        results["Total Frames Analyzed"] = total_analyzed_frames
+        results["Fake Frames"] = fake_count
+        results["Real Frames"] = real_count
+        results["Fake Percentage"] = round(fake_percentage, 2)
+        results["Final Video Prediction"] = "Fake" if fake_percentage > 50 else "Real"
+        results["Confidence Score"] = round(abs(50 - fake_percentage) / 50, 2)
+        
+        return results
+
+    except Exception as e:
+        return {"Error": f"Error analyzing video: {str(e)}"}
+
 # Metadata analysis
 def check_metadata(img_path):
     try:
@@ -116,3 +163,12 @@ if __name__ == "__main__":
                     print(f"  {sub_key}: {sub_value}")
             else:
                 print(f"{key}: {value}")
+
+# if __name__ == "__main__":
+#     # Test video
+#     test_video_path = "path/to/your/video.mp4"
+#     if os.path.exists(test_video_path):
+#         video_results = predict_video(test_video_path)
+#         print("\nVideo Analysis Results:")
+#         for key, value in video_results.items():
+#             print(f"{key}: {value}")

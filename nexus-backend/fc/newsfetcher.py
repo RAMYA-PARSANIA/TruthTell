@@ -90,7 +90,7 @@ class NewsFetcher:
             }
 
         except Exception as e:
-            #print(f"Error fetching news: {e}")
+            print(f"Error fetching news: {e}")
             return {
                 "status": "error",
                 "content": None

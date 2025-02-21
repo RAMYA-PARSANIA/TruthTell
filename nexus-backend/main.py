@@ -9,8 +9,8 @@ from contextlib import asynccontextmanager
 import asyncio
 from kafka import KafkaConsumer
 import json
-# import nest_asyncio
-# nest_asyncio.apply()
+import nest_asyncio
+nest_asyncio.apply()
 from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
 import os
@@ -69,6 +69,6 @@ def read_root():
     return {"message": "Hello, World!"}
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Default to 8000 if PORT isn't set
+    port = int(os.environ.get("PORT", 10000))  # Default to 8000 if PORT isn't set
     uvicorn.run(app, host="0.0.0.0", port=port)
     

@@ -43,7 +43,16 @@ export default function Dashboard() {
               <RealtimeNews />
             </TabsContent>
             <TabsContent value="deepfake-detection">
-              <DeepfakeDetection />
+              <div className="w-full h-[800px]">
+                <iframe
+                  src="https://heheboi0769-nexus-deepfake-detection.hf.space/"
+                  className="w-full h-full"
+                  frameBorder="0"
+                  title="TruthTell Deepfake Detection"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                />
+              </div>
             </TabsContent>
             <TabsContent value="user-based">
               <div className="text-gray-400">

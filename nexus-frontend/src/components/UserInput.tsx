@@ -236,7 +236,7 @@ export default function UserInput() {
                     </div>
 
                     {/* Claim Analysis Section */}
-                    <div>
+                    {/* <div>
                       <h3 className="text-lg font-semibold text-emerald-400 mb-3">
                         Claim Analysis
                       </h3>
@@ -279,10 +279,10 @@ export default function UserInput() {
                           )
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Explanation Section */}
-                    <div>
+                    {/* <div>
                       <h3 className="text-lg font-semibold text-emerald-400 mb-3">
                         Explanation
                       </h3>
@@ -312,7 +312,7 @@ export default function UserInput() {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </DialogContent>
               </Dialog>

@@ -37,9 +37,9 @@ class NewsFetcher:
             while len(final_articles) < 2:  # Fetch until we have at least 5 unique articles
                 news = self.newsapi.get_top_headlines(language='en', page=page, page_size=5)
 
-                #print("#"*50)
-                #print(f"News: {news}")
-                #print("#"*60)
+                print("#"*50)
+                print(f"News: {news}")
+                print("#"*60)
                 
                 if not news['articles']:
                     break

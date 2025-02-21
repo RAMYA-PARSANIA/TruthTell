@@ -129,9 +129,6 @@ sortedcontainers
 soupsieve
 SpeechRecognition
 starlette
-tensorboard
-tensorboard-data-server
-tensorflow_intel
 termcolor
 tiktoken
 tinysegmenter

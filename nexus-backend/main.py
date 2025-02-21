@@ -7,9 +7,16 @@ from contextlib import asynccontextmanager
 # from util.kafka_handler import KafkaHandler
 # from util.newsfetcher import NewsFetcher
 import asyncio
+from uvicorn.config import LOGGING_CONFIG
+import logging
 from kafka import KafkaConsumer
 import json
 import nest_asyncio
+try:
+    import uvloop
+    asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
+except ImportError:
+    pass
 nest_asyncio.apply()
 from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
@@ -68,7 +75,14 @@ async def analyze_news(news: NewsInput):
 def read_root():
     return {"message": "Hello, World!"}
 
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # Default to 8000 if PORT isn't set
-    uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        loop="asyncio",  # Explicitly use asyncio instead of uvloop
+        log_config=LOGGING_CONFIG,
+    )
     

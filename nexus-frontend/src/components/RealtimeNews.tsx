@@ -170,23 +170,22 @@ const RealtimeNews = () => {
   
   return (
     <div className="space-y-4 mt-10 bg-black text-white">
-      {isLoading && (
-        <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
-          <div className="flex items-center space-x-1">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="w-2 h-8 bg-blue-400 rounded-full animate-wave"
-                style={{
-                  animation: `wave 1s ease-in-out infinite`,
-                  animationDelay: `${i * 0.1}s`
-                }}
-              />
-            ))}
-          </div>
-          <span className="text-blue-400 font-medium">Fetching Latest News...</span>
+      <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+        <div className="flex items-center space-x-1">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="w-2 h-8 bg-blue-400 rounded-full animate-wave"
+              style={{
+                animation: `wave 1s ease-in-out infinite`,
+                animationDelay: `${i * 0.1}s`
+              }}
+            />
+          ))}
         </div>
-      )}
+        <span className="text-blue-400 font-medium">Fetching Latest News...</span>
+      </div>
+      
   
       {!isLoading && (
         <>

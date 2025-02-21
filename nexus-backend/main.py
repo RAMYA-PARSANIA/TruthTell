@@ -2,11 +2,10 @@ from fastapi import FastAPI, WebSocket, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import Database
 from routes.auth import router as auth_router
-from routes.deepfake_route import deepfake_router
+# from routes.deepfake_route import deepfake_router
 from contextlib import asynccontextmanager
 import asyncio
 import logging
-from kafka import KafkaConsumer
 import json
 import nest_asyncio
 
@@ -43,7 +42,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, tags=["authentication"])
-app.include_router(deepfake_router, tags=["deepfake"])
+# app.include_router(deepfake_router, tags=["deepfake"])
 app.include_router(news_router, tags=["news"])
 app.include_router(input_router, tags=["user_inputs"])
 

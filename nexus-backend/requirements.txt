@@ -1,9 +1,7 @@
 absl-py
 aiohappyeyeballs
-aiohttp
 aiosignal
 annotated-types
-anthropic
 anyio
 astunparse
 attrs
@@ -64,7 +62,6 @@ Jinja2
 jiter
 joblib
 jsonpath-python
-kafka-python-ng
 keras
 libclang
 lxml
@@ -95,7 +92,6 @@ passlib
 pillow
 playwright
 playwright-stealth
-politifact
 priority
 propcache
 proto-plus
@@ -135,7 +131,6 @@ SpeechRecognition
 starlette
 tensorboard
 tensorboard-data-server
-tensorflow
 tensorflow_intel
 termcolor
 tiktoken

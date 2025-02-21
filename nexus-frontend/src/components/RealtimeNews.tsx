@@ -117,21 +117,21 @@ const RealtimeNews = () => {
   useEffect(() => {
     const ws = new WebSocket(api_url);
 
-    ws.onopen = () => {
-      console.log('Connected to news WebSocket');
-      //keep loading true until the first news
-    };
+    // ws.onopen = () => {
+    //   console.log('Connected to news WebSocket');
+    //   //keep loading true until the first news
+    // };
 
-    ws.onclose = () => {
-      console.log('Disconnected from news WebSocket');
-      setIsLoading(true);
-    };
+    // ws.onclose = () => {
+    //   console.log('Disconnected from news WebSocket');
+    //   setIsLoading(true);
+    // };
     
     
-    ws.onopen = () => {
-      console.log('Connected to news WebSocket');
-      // Keep loading true until we receive first news
-    };
+    // ws.onopen = () => {
+    //   console.log('Connected to news WebSocket');
+    //   // Keep loading true until we receive first news
+    // };
     
     ws.onmessage = (event) => {
         try {
@@ -146,6 +146,7 @@ const RealtimeNews = () => {
                 return updatedNews.slice(-10);
             });
             console.log("News updated successfully");
+            console.log("News:", newsData); 
         } catch (error) {
             console.log("Received data:", event.data);
             setNews([]);

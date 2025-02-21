@@ -2,10 +2,13 @@ import RealtimeNews from "@/components/RealtimeNews";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserInput from "@/components/UserInput";
 import DeepfakeDetection from "./deepfake";
+import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
+    <Navbar />
+    <div className="min-h-screen bg-black text-white pt-12">
       <div className="container mx-auto p-8">
         <h1 className="text-3xl font-bold mb-8 text-white">
           Nexus of Truth Dashboard
@@ -75,5 +78,6 @@ export default function Dashboard() {
         </Tabs>
       </div>
     </div>
+    </>
   );
 }

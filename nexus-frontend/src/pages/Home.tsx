@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaCheckCircle, FaBolt, FaDatabase, FaBrain } from "react-icons/fa";
 import "./Home.css";
 import Spline from '@splinetool/react-spline';
+import Navbar from "@/components/navbar";
 
 const Home = () => {
   const features = [
@@ -98,6 +99,8 @@ const Home = () => {
   // );
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen">
       <div className="h-screen">
         <Spline scene="https://prod.spline.design/gbC1n3NsKQP9dZdE/scene.splinecode" />
@@ -154,6 +157,7 @@ const Home = () => {
         </motion.div>
       </motion.div>
     </div>
+    </>
   );
 
 };

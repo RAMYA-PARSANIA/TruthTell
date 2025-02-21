@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     # Configure Hypercorn
     config = Config()
-    config.bind = [f"0.0.0.0:{port}"]  # Listen on all interfaces
+    #config.bind = [f"0.0.0.0:{port}"]  # Listen on all interfaces
     config.app_path = "main:app" # tells hypercorn where your app is located
 
     # Explicitly use asyncio and start Hypercorn

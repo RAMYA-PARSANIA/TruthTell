@@ -29,8 +29,6 @@ async def websocket_endpoint(websocket: WebSocket):
         try:
             news_fetcher = NewsFetcher()
             news_data = await news_fetcher.fetch_and_produce()
-            print(news_data)
-
             
             if news_data["status"] == "success":
                 await websocket.send_json(news_data)

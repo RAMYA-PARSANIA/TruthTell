@@ -4,19 +4,12 @@ from db.init_db import Database
 from routes.auth import router as auth_router
 from routes.deepfake_route import deepfake_router
 from contextlib import asynccontextmanager
-# from util.kafka_handler import KafkaHandler
-# from util.newsfetcher import NewsFetcher
 import asyncio
-from uvicorn.config import LOGGING_CONFIG
 import logging
 from kafka import KafkaConsumer
 import json
 import nest_asyncio
-try:
-    import uvloop
-    asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
-except ImportError:
-    pass
+
 nest_asyncio.apply()
 from pydantic import BaseModel
 from Gemini.final import get_gemini_analysis
@@ -24,7 +17,8 @@ import os
 from tempfile import NamedTemporaryFile
 from routes.news_fetch import news_router
 from routes.user_inputs import input_router
-import uvicorn
+import hypercorn.asyncio
+from hypercorn.config import Config
 
 
 @asynccontextmanager
@@ -78,11 +72,11 @@ def read_root():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=port,
-        loop="asyncio",  # Explicitly use asyncio instead of uvloop
-        log_config=LOGGING_CONFIG,
-    )
-    
+
+    # Configure Hypercorn
+    config = Config()
+    config.bind = [f"0.0.0.0:{port}"]  # Listen on all interfaces
+    config.app_path = "main:app" # tells hypercorn where your app is located
+
+    # Explicitly use asyncio and start Hypercorn
+    asyncio.run(hypercorn.asyncio.serve(app, config))

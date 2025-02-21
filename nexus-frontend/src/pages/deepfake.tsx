@@ -7,6 +7,20 @@ import { Progress } from "@/components/ui/progress";
 import { Upload, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface DetectionResult {
+  CNN_Prediction: string;
+  Metadata_Analysis: string;
+  Artifact_Analyis: string;
+  Noise_Pattern_Analysis: string;
+  Symmetry_Analysis: {
+    Vertical_Symmetry: number;
+    Horizontal_Symmetry: number;
+  };
+  Final_Prediction: string;
+  Confidence_Score: number;
+}
+
+
 export default function DeepfakeDetection() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<DetectionResult | null>(null);

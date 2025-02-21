@@ -21,9 +21,6 @@ export default function UserInput() {
   const api_url = import.meta.env.VITE_API_URL;
   const [result, setResult] = useState<UserInputObject | null>(null);
 
-  const updateMyStatePlease = (withWhat: UserInputObject) => {
-    setResult(withWhat);
-  };
   useEffect(() => {
     // console.log("Result updated:", result);
   }, [result]);

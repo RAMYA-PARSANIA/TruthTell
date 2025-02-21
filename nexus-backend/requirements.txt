@@ -48,11 +48,15 @@ groq
 grpcio
 grpcio-status
 h11
+h2
 h5py
+hpack
 httpcore
 httplib2
 httptools
 httpx
+Hypercorn
+hyperframe
 idna
 itsdangerous
 jieba3k
@@ -92,6 +96,7 @@ pillow
 playwright
 playwright-stealth
 politifact
+priority
 propcache
 proto-plus
 protobuf

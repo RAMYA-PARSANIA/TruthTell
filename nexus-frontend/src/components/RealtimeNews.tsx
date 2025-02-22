@@ -11,162 +11,64 @@ import {
 
 //Interface for news object
 interface NewsObject {
-  newsObjs : {
     id: string;
     article: string;
     full_text: { 
         status: string,
         summary: string,
-        keywords: string,
         title: string,
         text: string,
         url: string
     };
     fact_check: {
-      timestamp: number,
-      original_text: string,
       detailed_analysis: {
         overall_analysis: {
           truth_score: number,
           reliability_assessment: string,
           key_findings: string[],
           patterns_identified: string[]
-        },
-        claim_analysis: {
-          claim: string,
-          verification_status: string,
-          confidence_level: number,
-          evidence_quality :{
-            strength: number,
-            gaps: string[],
-            contradictions: string[],
-          },
-          source_assessment: {
-            url: string,
-            credibility_metrics: {
-              credibility_score: number,
-              bias_rating: string,
-              fact_checking_history: number
-            },
-            relevance_to_claim: number
-          }[],
-          misinformation_impact: {
-            severity: number,
-            affected_domains: string[],
-            potential_consequences: string[],
-            spread_risk: number,
-          },
-          correction_suggestions: {
-            verified_facts: string[],
-            recommended_sources: {
-              url: string,
-              credibility_score: number,
-              relevance: number
-            }[],
-            context_missing: string[],
-          },
-        }[],
-        meta_analysis: {
-          information_ecosystem_impact: string,
-          recommended_actors: string[],
-          prevention_strategies: string[],
-        },
+        }
       },
     };
-    explanation: {
-      explanation_summary: string,
-      claim_explanations: {
-        claim: string,
-        reasoning: string,
-        key_factors: string[],
-        confidence_explanation: string,
-      }[],
-      evidence_analysis: {
-        strength_explanation: string,
-        gap_analysis: string,
-        contradiction_details: string,
-      },
-      trust_factors: {
-        factor: string,
-        impact: string,
-        recommendation: string,
-      }[]
-    };
-    visualization: {
-      confidence_breakdown: {
-        claim: string,
-        factors: string[]
-      }[],
-      decision_path: {
-        claim: string,
-        reasoning_steps: string[],
-      }[]
-    };
-  }[]
 }
+
+import PusherClient from "pusher-js";
+
+// Allows you to use Pusher inside Next.js "use client" components.
+export const pusherClient = new PusherClient(
+  import.meta.env.VITE_PUSHER_KEY!,
+  {
+    cluster: "ap2",
+  }
+);
 
 
 const RealtimeNews = () => {
   //NewsObject state
-  const [news, setNews] = useState<NewsObject['newsObjs']>([]);
-  const [selectedClaims, setSelectedClaims] = useState<any>(null);
-  const [showClaimsDialog, setShowClaimsDialog] = useState(false);
+  const [news, setNews] = useState<NewsObject[]>([]);
+  // const [selectedClaims, setSelectedClaims] = useState<any>(null);
+  // const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const api_url = import.meta.env.VITE_NEWS_API_URL;
   
   useEffect(() => {
-    const ws = new WebSocket(api_url);
-
-    ws.onopen = () => {
-      console.log('Connected to news WebSocket');
-      //keep loading true until the first news
-    };
-
-    ws.onclose = () => {
-      console.log('Disconnected from news WebSocket');
-      setIsLoading(true);
-    };
+    pusherClient.subscribe("news-channel");
+    pusherClient.bind("news-update", (data: any) => {
+      console.log("Received news update:", data);
+      setNews((prevNews) => { 
+        const newsUpdated = [...prevNews, data];
+        return newsUpdated;
+      });
+      setIsLoading(false);
+      console.log("Received news update:", news);
+    });
     
-    
-    ws.onopen = () => {
-      console.log('Connected to news WebSocket');
-      // Keep loading true until we receive first news
-    };
-    
-    ws.onmessage = (event) => {
-        try {
-            const newsData = JSON.parse(event.data);
-            setNews(prevNews => {
-                const newContent = Array.isArray(newsData) ? newsData : (Array.isArray(newsData?.content) ? newsData.content : []);
-                const updatedNews = [...prevNews, ...newContent];
-                // Only set loading to false when we have news items
-                if (updatedNews.length > 0) {
-                    setIsLoading(false);
-                }
-                return updatedNews.slice(-10);
-            });
-            console.log("News updated successfully");
-        } catch (error) {
-            console.log("Received data:", event.data);
-            setNews([]);
-        }
-    };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('Disconnected from news WebSocket');
-    };
-
-    // Cleanup on component unmount
     return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
+      pusherClient.unsubscribe("news-channel");
     };
   }, [])
+
+
   
   return (
     <div className="space-y-4 mt-10 bg-black text-white">
@@ -337,7 +239,7 @@ const RealtimeNews = () => {
                         </div>
                       </div>
   
-                      <div className="mt-6">
+                      {/* <div className="mt-6">
                         <button 
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                           onClick={() => {
@@ -347,7 +249,7 @@ const RealtimeNews = () => {
                         >
                           View Detailed Claim Analysis
                         </button>
-                      </div>
+                      </div> */}
   
                     </div>
                   </DialogContent>
@@ -357,7 +259,7 @@ const RealtimeNews = () => {
             <ScrollBar orientation="horizontal" className="bg-gray-800" />
           </ScrollArea>
   
-          <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
+          {/* <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
               <DialogHeader>
                 <DialogTitle className="text-lg font-bold text-blue-400">
@@ -433,7 +335,7 @@ const RealtimeNews = () => {
                 </ul>
               </div>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </>
       )}
     </div>

@@ -1,4 +1,4 @@
-import RealtimeNews from "@/components/RealtimeNews";
+//import RealtimeNews from "@/components/RealtimeNews";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserInput from "@/components/UserInput";
 // import DeepfakeDetection from "./deepfake";

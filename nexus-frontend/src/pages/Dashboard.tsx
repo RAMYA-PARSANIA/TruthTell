@@ -1,8 +1,9 @@
-//import RealtimeNews from "@/components/RealtimeNews";
+import RealtimeNews from "@/components/RealtimeNews";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserInput from "@/components/UserInput";
 // import DeepfakeDetection from "./deepfake";
 import Navbar from "@/components/navbar";
+import VideoAnalysis from "@/components/VideoAnalysis";
 
 export default function Dashboard() {
   return (
@@ -13,14 +14,14 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold mb-8 text-white">
           Nexus of Truth Dashboard
         </h1>
-        <Tabs defaultValue="nlp-model" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
-            {/* <TabsTrigger
+        <Tabs defaultValue="realtime-news" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
+            <TabsTrigger
               value="realtime-news"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
               Realtime News Checking
-            </TabsTrigger> */}
+            </TabsTrigger>
             <TabsTrigger
               value="nlp-model"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
@@ -28,23 +29,35 @@ export default function Dashboard() {
               NLP Model 
             </TabsTrigger>
             <TabsTrigger
-              value="deepfake-detection"
-              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
-            >
-              Deepfake Detection
-            </TabsTrigger>
-            <TabsTrigger
               value="user-based"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
               User Reports
             </TabsTrigger>
+            <TabsTrigger
+              value="video-analysis"
+              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
+            >
+              Video Analysis
+            </TabsTrigger>
+            <TabsTrigger
+              value="audio-analysis"
+              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
+            >
+              Audio Analysis
+            </TabsTrigger>
+            <TabsTrigger
+              value="deepfake-detection"
+              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
+            >
+              Deepfake Detection
+            </TabsTrigger>
           </TabsList>
 
           <div className="mt-4">
-            {/* <TabsContent value="realtime-news">
+            <TabsContent value="realtime-news">
               <RealtimeNews />
-            </TabsContent> */}
+            </TabsContent>
             <TabsContent value="deepfake-detection">
               <div className="w-full h-[800px]">
                 <iframe
@@ -72,6 +85,11 @@ export default function Dashboard() {
                   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                   sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                 />
+              </div>
+            </TabsContent>
+            <TabsContent value="video-analysis">
+              <div className="w-full">
+                <VideoAnalysis />
               </div>
             </TabsContent>
           </div>

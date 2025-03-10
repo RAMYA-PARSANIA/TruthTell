@@ -25,9 +25,19 @@ interface NewsObject {
         overall_analysis: {
           truth_score: number,
           reliability_assessment: string,
-          key_findings: string[],
-          patterns_identified: string[]
-        }
+          key_findings: string[]
+        },
+        claim_analysis: {
+          claim: string,
+          verification_status: string,
+          confidence_level: number,
+          misinformation_impact: {
+            severity: number,
+            affected_domains: string[],
+            potential_consequences: string[],
+            spread_risk: number
+          }
+        }[]
       },
     };
 }
@@ -46,13 +56,13 @@ export const pusherClient = new PusherClient(
 const RealtimeNews = () => {
   //NewsObject state
   const [news, setNews] = useState<NewsObject[]>([]);
-  // const [selectedClaims, setSelectedClaims] = useState<any>(null);
-  // const [showClaimsDialog, setShowClaimsDialog] = useState(false);
+  const [selectedClaims, setSelectedClaims] = useState<any>(null);
+  const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     pusherClient.subscribe("news-channel");
-    pusherClient.bind("news-update", (data: any) => {
+    pusherClient.bind("fact-check", (data: any) => {
       console.log("Received news update:", data);
       setNews((prevNews) => { 
         const newsUpdated = [...prevNews, data];
@@ -187,14 +197,14 @@ const RealtimeNews = () => {
                               ))}
                             </ul>
                           </div>
-                          <div className="mt-2">
+                          {/* <div className="mt-2">
                             <p className="text-sm font-medium text-gray-200">Patterns:</p>
                             <ul className="list-disc pl-4 text-xs text-gray-400">
                               {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.slice(0, 2).map((pattern, index) => (
                                 <li key={index} className="line-clamp-1">{pattern}</li>
                               ))}
                             </ul>
-                          </div>
+                          </div> */}
                         </div>
                       </CardContent>
                     </Card>
@@ -229,17 +239,17 @@ const RealtimeNews = () => {
                             ))}
                           </ul>
                         </div>
-                        <div className="mt-2">
+                        {/* <div className="mt-2">
                           <p className="text-sm font-medium text-gray-200">Patterns Identified:</p>
                           <ul className="list-disc pl-4 text-xs text-gray-400">
                             {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.map((pattern, index) => (
                               <li key={index}>{pattern}</li>
                             ))}
                           </ul>
-                        </div>
+                        </div> */}
                       </div>
   
-                      {/* <div className="mt-6">
+                      <div className="mt-6">
                         <button 
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                           onClick={() => {
@@ -249,7 +259,7 @@ const RealtimeNews = () => {
                         >
                           View Detailed Claim Analysis
                         </button>
-                      </div> */}
+                      </div>
   
                     </div>
                   </DialogContent>
@@ -259,7 +269,7 @@ const RealtimeNews = () => {
             <ScrollBar orientation="horizontal" className="bg-gray-800" />
           </ScrollArea>
   
-          {/* <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
+          <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
               <DialogHeader>
                 <DialogTitle className="text-lg font-bold text-blue-400">
@@ -290,7 +300,7 @@ const RealtimeNews = () => {
                             <DialogTitle className="text-blue-400">Detailed Claim Analysis</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
-                            <div>
+                            {/* <div>
                               <h4 className="text-emerald-400 font-medium mb-2">Evidence Quality</h4>
                               <p className="text-gray-200">Strength: {claim.evidence_quality.strength}</p>
                               <div className="mt-2">
@@ -301,8 +311,8 @@ const RealtimeNews = () => {
                                   ))}
                                 </ul>
                               </div>
-                            </div>
-                            <div>
+                            </div> */}
+                            {/* <div>
                               <h4 className="text-emerald-400 font-medium mb-2">Source Assessment</h4>
                               <ul className="space-y-2">
                                 {claim.source_assessment.map((source: any, i: number) => (
@@ -313,7 +323,7 @@ const RealtimeNews = () => {
                                   </li>
                                 ))}
                               </ul>
-                            </div>
+                            </div> */}
                             <div>
                               <h4 className="text-emerald-400 font-medium mb-2">Misinformation Impact</h4>
                               <p className="text-gray-200">Severity: {claim.misinformation_impact.severity}</p>
@@ -335,7 +345,7 @@ const RealtimeNews = () => {
                 </ul>
               </div>
             </DialogContent>
-          </Dialog> */}
+          </Dialog>
         </>
       )}
     </div>

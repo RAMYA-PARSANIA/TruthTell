@@ -4,6 +4,7 @@ import UserInput from "@/components/UserInput";
 // import DeepfakeDetection from "./deepfake";
 import Navbar from "@/components/navbar";
 import VideoAnalysis from "@/components/VideoAnalysis";
+import Broadcasts from "@/components/Broadcasts";
 
 export default function Dashboard() {
   return (
@@ -21,6 +22,12 @@ export default function Dashboard() {
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
               Realtime News Checking
+            </TabsTrigger>
+            <TabsTrigger
+              value="broadcasts"
+              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
+            >
+              Broadcasts 
             </TabsTrigger>
             <TabsTrigger
               value="nlp-model"
@@ -57,6 +64,9 @@ export default function Dashboard() {
           <div className="mt-4">
             <TabsContent value="realtime-news">
               <RealtimeNews />
+            </TabsContent>
+            <TabsContent value="broadcasts">
+              <Broadcasts />
             </TabsContent>
             <TabsContent value="deepfake-detection">
               <div className="w-full h-[800px]">

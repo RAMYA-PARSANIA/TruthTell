@@ -59,7 +59,24 @@ const RealtimeNews = () => {
   const [selectedClaims, setSelectedClaims] = useState<any>(null);
   const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const api_url = import.meta.env.VITE_API_URL;
   
+  useEffect(() => {
+    const fetchInitialNews = async () => {
+      try {
+        const response = await fetch(`${api_url}/all-news`);
+        const data = await response.json();
+        setNews([...data.content]);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching initial news:', error);
+      }
+    };
+
+
+    fetchInitialNews();
+  }, []);
+
   useEffect(() => {
     pusherClient.subscribe("news-channel");
     pusherClient.bind("fact-check", (data: any) => {

@@ -69,7 +69,7 @@ const RealtimeNews = () => {
         const response = await fetch(`${api_url}/all-news`);
         const data = await response.json();
         setNews([...data.content]);
-        console.log("Initial news fetched:", data);
+        // console.log("Initial news fetched:", data);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching initial news:', error);
@@ -83,13 +83,13 @@ const RealtimeNews = () => {
   useEffect(() => {
     pusherClient.subscribe("news-channel");
     pusherClient.bind("fact-check", (data: any) => {
-      console.log("Received news update:", data);
+      // console.log("Received news update:", data);
       setNews((prevNews) => { 
         const newsUpdated = [...prevNews, data];
         return newsUpdated;
       });
       setIsLoading(false);
-      console.log("Received news update:", news);
+      // console.log("Received news update:", news);
     });
     
 

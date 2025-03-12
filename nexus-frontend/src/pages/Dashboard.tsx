@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserInput from "@/components/UserInput";
 // import DeepfakeDetection from "./deepfake";
 import Navbar from "@/components/navbar";
-import VideoAnalysis from "@/components/VideoAnalysis";
 import Broadcasts from "@/components/Broadcasts";
 
 export default function Dashboard() {
@@ -16,7 +15,7 @@ export default function Dashboard() {
           Nexus of Truth Dashboard
         </h1>
         <Tabs defaultValue="realtime-news" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
+          <TabsList className="grid w-full grid-cols-5 gap-4 mb-8 rounded-lg h-auto bg-slate-800">
             <TabsTrigger
               value="realtime-news"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
@@ -30,28 +29,16 @@ export default function Dashboard() {
               Broadcasts 
             </TabsTrigger>
             <TabsTrigger
-              value="nlp-model"
-              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
-            >
-              NLP Model 
-            </TabsTrigger>
-            <TabsTrigger
               value="user-based"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
               User Reports
             </TabsTrigger>
             <TabsTrigger
-              value="video-analysis"
+              value="nlp-model"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
-              Video Analysis
-            </TabsTrigger>
-            <TabsTrigger
-              value="audio-analysis"
-              className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
-            >
-              Audio Analysis
+              NLP Model 
             </TabsTrigger>
             <TabsTrigger
               value="deepfake-detection"
@@ -95,11 +82,6 @@ export default function Dashboard() {
                   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                   sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                 />
-              </div>
-            </TabsContent>
-            <TabsContent value="video-analysis">
-              <div className="w-full">
-                <VideoAnalysis />
               </div>
             </TabsContent>
           </div>

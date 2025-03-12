@@ -12,12 +12,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UserInputObject, UserInputOutput } from "./types";
+import { UserInputObject } from "./types";
 
 export default function UserInput() {
   const [isLoading, setIsLoading] = useState(false);
   const [inputType, setInputType] = useState("text");
   const [inputValue, setInputValue] = useState("");
+  const [showSources, setShowSources] = useState(false);
   const api_url = import.meta.env.VITE_API_URL;
   const [result, setResult] = useState<UserInputObject | null>(null);
 
@@ -42,9 +43,10 @@ export default function UserInput() {
         }),
       });
 
-      const data: UserInputOutput = await response.json();
+      const data = await response.json();
+      
+      const res = data.content;
 
-      const res: UserInputObject = data.content;
 
       setResult((prevResult) => {
         if (prevResult) {
@@ -129,7 +131,6 @@ export default function UserInput() {
         </form>
       </Tabs>
 
-      {/* Replace the existing result display with this: */}
       {(isLoading || result) && (
           <CardContent className="pt-6">
             {isLoading ? (
@@ -220,7 +221,7 @@ export default function UserInput() {
                           </ul>
                         </div>
 
-                        <div>
+                        {/* <div>
                           <p className="text-sm font-medium mb-2">
                             Patterns Identified:
                           </p>
@@ -231,12 +232,41 @@ export default function UserInput() {
                               )
                             )}
                           </ul>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
+                    <div className="mt-6">
+                      <button 
+                        className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+                        onClick={() => setShowSources(!showSources)}
+                      >
+                        {showSources ? 'Hide Sources' : 'Show Sources'}
+                      </button>
+                      
+                      {showSources && (
+                        <div className="mt-4 bg-gray-800 p-4 rounded-md">
+                          <h4 className="text-emerald-400 font-medium mb-2">Sources</h4>
+                          <ul className="list-disc pl-4 text-gray-300">
+                            {result?.sources?.map((url, index) => (
+                              <li key={index} className="mb-2">
+                                <a 
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer" 
+                                  className="text-blue-400 hover:underline"
+                                >
+                                  {url}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
 
                     {/* Claim Analysis Section */}
-                    {/* <div>
+                    <div>
                       <h3 className="text-lg font-semibold text-emerald-400 mb-3">
                         Claim Analysis
                       </h3>
@@ -262,7 +292,7 @@ export default function UserInput() {
                                 {claim.confidence_level})
                               </p>
 
-                              <div className="mt-4">
+                              { /*<div className="mt-4">
                                 <p className="text-sm font-medium mb-2">
                                   Evidence Quality:
                                 </p>
@@ -274,12 +304,12 @@ export default function UserInput() {
                                     <li key={i}>{gap}</li>
                                   ))}
                                 </ul>
-                              </div>
+                              </div>*/ }
                             </div>
                           )
                         )}
                       </div>
-                    </div> */}
+                    </div>
 
                     {/* Explanation Section */}
                     {/* <div>

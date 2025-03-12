@@ -28,22 +28,19 @@
 //   strength: number;
 // }
 
-// interface MisinformationImpact {
-//   affected_domains: string[];
-//   potential_consequences: string[];
-//   severity: number;
-//   spread_risk: number;
-// }
+interface MisinformationImpact {
+  affected_domains: string[];
+  potential_consequences: string[];
+  severity: number;
+  spread_risk: number;
+}
 
-// interface ClaimAnalysis {
-//   claim: string; //
-//   confidence_level: number; //
-//   correction_suggestions: CorrectionSuggestions; //
-//   evidence_quality: EvidenceQuality; //
-//   misinformation_impact: MisinformationImpact; //
-//   source_assessment: SourceAssessment[]; //
-//   verification_status: string; //
-// }
+interface ClaimAnalysis {
+  claim: string; //
+  confidence_level: number; //
+  misinformation_impact: MisinformationImpact; //
+  verification_status: string; //
+}
 
 // interface MetaAnalysis {
 //   information_ecosystem_impact: string;
@@ -53,13 +50,12 @@
 
 interface OverallAnalysis {
   key_findings: string[];
-  patterns_identified: string[];
   reliability_assessment: string;
   truth_score: number;
 }
 
 interface FactCheckResult {
-  // claim_analysis: ClaimAnalysis[]; //
+  claim_analysis: ClaimAnalysis[]; //
   // meta_analysis: MetaAnalysis; //
   overall_analysis: OverallAnalysis; //
 }
@@ -92,10 +88,9 @@ interface FactCheckResult {
 
 export interface UserInputObject {
   fact_check_result: {
-    // original_text: string;
-    // timestamp: string;
     detailed_analysis: FactCheckResult;
   }; //
+  sources: string[]; //
   // explanation: Explanation; //
 }
 

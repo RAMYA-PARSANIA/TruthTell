@@ -17,7 +17,7 @@ interface NewsObject {
         status: string,
         summary: string,
         title: string,
-        text: string,
+        text?: string,
         url: string
     };
     fact_check: {
@@ -40,6 +40,7 @@ interface NewsObject {
         }[]
       },
     };
+    sources: string[];
 }
 
 import PusherClient from "pusher-js";
@@ -59,6 +60,7 @@ const RealtimeNews = () => {
   const [selectedClaims, setSelectedClaims] = useState<any>(null);
   const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSources, setShowSources] = useState(false);
   const api_url = import.meta.env.VITE_API_URL;
   
   useEffect(() => {
@@ -67,6 +69,7 @@ const RealtimeNews = () => {
         const response = await fetch(`${api_url}/all-news`);
         const data = await response.json();
         setNews([...data.content]);
+        console.log("Initial news fetched:", data);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching initial news:', error);
@@ -165,12 +168,12 @@ const RealtimeNews = () => {
                           <p>{newsItems.full_text.summary}</p>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-200">
+                      {newsItems.full_text.text && (<div className="text-sm text-gray-200">
                         <div className="text-sm text-gray-200">
                           <h3 className="text-lg font-semibold text-emerald-400 mb-3">Full Article</h3>
                           <p className="whitespace-pre-wrap">{newsItems.full_text.text}</p>
                         </div>
-                      </div>
+                      </div>)}
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>
@@ -265,7 +268,37 @@ const RealtimeNews = () => {
                           </ul>
                         </div> */}
                       </div>
-  
+
+                      <div className="mt-6">
+                        <button 
+                          className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+                          onClick={() => setShowSources(!showSources)}
+                        >
+                          {showSources ? 'Hide Sources' : 'Show Sources'}
+                        </button>
+                        
+                        {showSources && (
+                          <div className="mt-4 bg-gray-800 p-4 rounded-md">
+                            <h4 className="text-emerald-400 font-medium mb-2">Sources</h4>
+                            <ul className="list-disc pl-4 text-gray-300">
+                              {newsItems.sources?.map((url, index) => (
+                                <li key={index} className="mb-2">
+                                  <a 
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer" 
+                                    className="text-blue-400 hover:underline"
+                                  >
+                                    {url}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+
+
                       <div className="mt-6">
                         <button 
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -277,7 +310,7 @@ const RealtimeNews = () => {
                           View Detailed Claim Analysis
                         </button>
                       </div>
-  
+
                     </div>
                   </DialogContent>
                 </Dialog>

@@ -4,6 +4,7 @@ import UserInput from "@/components/UserInput";
 // import DeepfakeDetection from "./deepfake";
 import Navbar from "@/components/navbar";
 import Broadcasts from "@/components/Broadcasts";
+import DeepfakeDetection from "@/components/DeepfakeDetection";
 
 export default function Dashboard() {
   return (
@@ -56,16 +57,7 @@ export default function Dashboard() {
               <Broadcasts />
             </TabsContent>
             <TabsContent value="deepfake-detection">
-              <div className="w-full h-[800px]">
-                <iframe
-                  src="https://heheboi0769-nexus-deepfake-detection.hf.space/"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  title="TruthTell Deepfake Detection"
-                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                />
-              </div>
+              <DeepfakeDetection />
             </TabsContent>
             <TabsContent value="user-based">
               <div className="text-gray-400">

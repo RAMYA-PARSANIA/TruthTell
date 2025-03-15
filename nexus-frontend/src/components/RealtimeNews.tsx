@@ -80,19 +80,34 @@ const RealtimeNews = () => {
     fetchInitialNews();
   }, []);
 
+  // useEffect(() => {
+  //   pusherClient.subscribe("news-channel");
+  //   pusherClient.bind("fact-check", (data: any) => {
+  //     // console.log("Received news update:", data);
+  //     setNews((prevNews) => { 
+  //       const newsUpdated = [...prevNews, data];
+  //       return newsUpdated;
+  //     });
+  //     setIsLoading(false);
+  //     // console.log("Received news update:", news);
+  //   });
+    
+
+  //   return () => {
+  //     pusherClient.unsubscribe("news-channel");
+  //   };
+  // }, [])
+
   useEffect(() => {
     pusherClient.subscribe("news-channel");
     pusherClient.bind("fact-check", (data: any) => {
-      // console.log("Received news update:", data);
       setNews((prevNews) => { 
-        const newsUpdated = [...prevNews, data];
+        const newsUpdated = [data, ...prevNews];
         return newsUpdated;
       });
       setIsLoading(false);
-      // console.log("Received news update:", news);
     });
-    
-
+  
     return () => {
       pusherClient.unsubscribe("news-channel");
     };
@@ -100,188 +115,328 @@ const RealtimeNews = () => {
 
 
   
-  return (
-    <div className="space-y-4 mt-10 bg-black text-white">
-      <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
-        <div className="flex items-center space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-2 h-8 bg-blue-400 rounded-full animate-wave"
-              style={{
-                animation: `wave 1s ease-in-out infinite`,
-                animationDelay: `${i * 0.1}s`
-              }}
-            />
-          ))}
-        </div>
-        <span className="text-blue-400 font-medium">Fetching Latest News...</span>
-      </div>
+  // return (
+  //   <div className="space-y-4 mt-10 bg-black text-white">
+  //     <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+  //       <div className="flex items-center space-x-1">
+  //         {[...Array(5)].map((_, i) => (
+  //           <div
+  //             key={i}
+  //             className="w-2 h-8 bg-blue-400 rounded-full animate-wave"
+  //             style={{
+  //               animation: `wave 1s ease-in-out infinite`,
+  //               animationDelay: `${i * 0.1}s`
+  //             }}
+  //           />
+  //         ))}
+  //       </div>
+  //       <span className="text-blue-400 font-medium">Fetching Latest News...</span>
+  //     </div>
       
   
-      {!isLoading && (
-        <>
-          <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
-            <div className="flex w-max space-x-4 p-4">
-              {news.map((newsItems) => (
-                <Dialog key={newsItems.id}>
-                  <DialogTrigger asChild>
-                    <Card
-                      className="w-[300px] shrink-0 bg-gray-900 border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors"
-                    >
-                      <CardHeader className="h-auto">
-                        <CardTitle className="text-sm text-white break-words whitespace-normal">
-                          <span className="hover:text-blue-400">
-                            {newsItems.full_text.title}
-                          </span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <a 
-                          href={newsItems.full_text.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:underline"
-                        >
-                          Original Article
-                        </a>
-                      </CardContent>
-                    </Card>
-                  </DialogTrigger>
-                  <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
-                        {newsItems.full_text.title}
-                      </DialogTitle>
-                      <h3 className="text-lg font-semibold text-emerald-400 mb-3">Source</h3>
-                      <a 
-                        href={newsItems.full_text.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:underline"
-                      >
-                        Original Article
-                      </a>
-                      <div className="mt-4 space-y-6">
-                        <div className="text-sm text-gray-200">
-                          <h3 className="text-lg font-semibold text-emerald-400 mb-3">Summary</h3>
-                          <p>{newsItems.full_text.summary}</p>
-                        </div>
-                      </div>
-                      {newsItems.full_text.text && (<div className="text-sm text-gray-200">
-                        <div className="text-sm text-gray-200">
-                          <h3 className="text-lg font-semibold text-emerald-400 mb-3">Full Article</h3>
-                          <p className="whitespace-pre-wrap">{newsItems.full_text.text}</p>
-                        </div>
-                      </div>)}
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" className="bg-gray-800" />
-          </ScrollArea>
+  //     {!isLoading && (
+  //       <>
+  //         <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
+  //           <div className="flex w-max space-x-4 p-4">
+  //             {news.map((newsItems) => (
+  //               <Dialog key={newsItems.id}>
+  //                 <DialogTrigger asChild>
+  //                   <Card
+  //                     className="w-[300px] shrink-0 bg-gray-900 border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors"
+  //                   >
+  //                     <CardHeader className="h-auto">
+  //                       <CardTitle className="text-sm text-white break-words whitespace-normal">
+  //                         <span className="hover:text-blue-400">
+  //                           {newsItems.full_text.title}
+  //                         </span>
+  //                       </CardTitle>
+  //                     </CardHeader>
+  //                     <CardContent>
+  //                       <a 
+  //                         href={newsItems.full_text.url} 
+  //                         target="_blank" 
+  //                         rel="noopener noreferrer"
+  //                         className="text-blue-400 hover:underline"
+  //                       >
+  //                         Original Article
+  //                       </a>
+  //                     </CardContent>
+  //                   </Card>
+  //                 </DialogTrigger>
+  //                 <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+  //                   <DialogHeader>
+  //                     <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
+  //                       {newsItems.full_text.title}
+  //                     </DialogTitle>
+  //                     <h3 className="text-lg font-semibold text-emerald-400 mb-3">Source</h3>
+  //                     <a 
+  //                       href={newsItems.full_text.url} 
+  //                       target="_blank" 
+  //                       rel="noopener noreferrer"
+  //                       className="text-blue-400 hover:underline"
+  //                     >
+  //                       Original Article
+  //                     </a>
+  //                     <div className="mt-4 space-y-6">
+  //                       <div className="text-sm text-gray-200">
+  //                         <h3 className="text-lg font-semibold text-emerald-400 mb-3">Summary</h3>
+  //                         <p>{newsItems.full_text.summary}</p>
+  //                       </div>
+  //                     </div>
+  //                     {newsItems.full_text.text && (<div className="text-sm text-gray-200">
+  //                       <div className="text-sm text-gray-200">
+  //                         <h3 className="text-lg font-semibold text-emerald-400 mb-3">Full Article</h3>
+  //                         <p className="whitespace-pre-wrap">{newsItems.full_text.text}</p>
+  //                       </div>
+  //                     </div>)}
+  //                   </DialogHeader>
+  //                 </DialogContent>
+  //               </Dialog>
+  //             ))}
+  //           </div>
+  //           <ScrollBar orientation="horizontal" className="bg-gray-800" />
+  //         </ScrollArea>
   
-          <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
-            <div className="flex w-max space-x-4 p-4">
-              {news.map((newsItems) => (
-                <Dialog key={newsItems.id}>
-                  <DialogTrigger asChild>
-                    <Card className="w-[300px] shrink-0 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
-                      <CardHeader>
-                        <CardTitle className="text-sm line-clamp-2 text-white">
-                          {newsItems.full_text.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                          <p
-                            className={`text-sm font-semibold mb-2 ${
-                              newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
-                                ? "text-emerald-400"
-                                : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
-                                ? "text-amber-400"
-                                : "text-rose-400"
-                            }`}
-                          >
-                            Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
-                          </p>
-                          <p className="text-sm text-gray-200 line-clamp-1">
-                            Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
-                          </p>
-                          <div className="mt-2">
-                            <p className="text-sm font-medium text-gray-200">Key Findings:</p>
-                            <ul className="list-disc pl-4 text-xs text-gray-400">
-                              {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.slice(0, 2).map((finding, index) => (
-                                <li key={index} className="line-clamp-1">{finding}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          {/* <div className="mt-2">
-                            <p className="text-sm font-medium text-gray-200">Patterns:</p>
-                            <ul className="list-disc pl-4 text-xs text-gray-400">
-                              {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.slice(0, 2).map((pattern, index) => (
-                                <li key={index} className="line-clamp-1">{pattern}</li>
-                              ))}
-                            </ul>
-                          </div> */}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </DialogTrigger>
-                  <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
-                        {newsItems.full_text.title}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-4">
-                      <div className="space-y-2">
-                        <p
-                          className={`text-sm font-semibold mb-2 ${
-                            newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
+  //         <ScrollArea className="w-full whitespace-nowrap rounded-md border border-gray-800">
+  //           <div className="flex w-max space-x-4 p-4">
+  //             {news.map((newsItems) => (
+  //               <Dialog key={newsItems.id}>
+  //                 <DialogTrigger asChild>
+  //                   <Card className="w-[300px] shrink-0 cursor-pointer hover:bg-gray-800 transition-colors bg-gray-900 border-gray-800">
+  //                     <CardHeader>
+  //                       <CardTitle className="text-sm line-clamp-2 text-white">
+  //                         {newsItems.full_text.title}
+  //                       </CardTitle>
+  //                     </CardHeader>
+  //                     <CardContent>
+  //                       <div className="space-y-2 max-h-[200px] overflow-y-auto">
+  //                         <p
+  //                           className={`text-sm font-semibold mb-2 ${
+  //                             newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
+  //                               ? "text-emerald-400"
+  //                               : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
+  //                               ? "text-amber-400"
+  //                               : "text-rose-400"
+  //                           }`}
+  //                         >
+  //                           Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
+  //                         </p>
+  //                         <p className="text-sm text-gray-200 line-clamp-1">
+  //                           Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
+  //                         </p>
+  //                         <div className="mt-2">
+  //                           <p className="text-sm font-medium text-gray-200">Key Findings:</p>
+  //                           <ul className="list-disc pl-4 text-xs text-gray-400">
+  //                             {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.slice(0, 2).map((finding, index) => (
+  //                               <li key={index} className="line-clamp-1">{finding}</li>
+  //                             ))}
+  //                           </ul>
+  //                         </div>
+  //                         {/* <div className="mt-2">
+  //                           <p className="text-sm font-medium text-gray-200">Patterns:</p>
+  //                           <ul className="list-disc pl-4 text-xs text-gray-400">
+  //                             {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.slice(0, 2).map((pattern, index) => (
+  //                               <li key={index} className="line-clamp-1">{pattern}</li>
+  //                             ))}
+  //                           </ul>
+  //                         </div> */}
+  //                       </div>
+  //                     </CardContent>
+  //                   </Card>
+  //                 </DialogTrigger>
+  //                 <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+  //                   <DialogHeader>
+  //                     <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
+  //                       {newsItems.full_text.title}
+  //                     </DialogTitle>
+  //                   </DialogHeader>
+  //                   <div className="mt-4">
+  //                     <div className="space-y-2">
+  //                       <p
+  //                         className={`text-sm font-semibold mb-2 ${
+  //                           newsItems.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
+  //                             ? "text-emerald-400"
+  //                             : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
+  //                             ? "text-amber-400"
+  //                             : "text-rose-400"
+  //                         }`}
+  //                       >
+  //                         Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
+  //                       </p>
+  //                       <p className="text-sm text-gray-200">
+  //                         Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
+  //                       </p>
+  //                       <div className="mt-2">
+  //                         <p className="text-sm font-medium text-gray-200">Key Findings:</p>
+  //                         <ul className="list-disc pl-4 text-xs text-gray-400">
+  //                           {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
+  //                             <li key={index}>{finding}</li>
+  //                           ))}
+  //                         </ul>
+  //                       </div>
+  //                       {/* <div className="mt-2">
+  //                         <p className="text-sm font-medium text-gray-200">Patterns Identified:</p>
+  //                         <ul className="list-disc pl-4 text-xs text-gray-400">
+  //                           {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.map((pattern, index) => (
+  //                             <li key={index}>{pattern}</li>
+  //                           ))}
+  //                         </ul>
+  //                       </div> */}
+  //                     </div>
+
+  //                     <div className="mt-6">
+  //                       <button 
+  //                         className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+  //                         onClick={() => setShowSources(!showSources)}
+  //                       >
+  //                         {showSources ? 'Hide Sources' : 'Show Sources'}
+  //                       </button>
+                        
+  //                       {showSources && (
+  //                         <div className="mt-4 bg-gray-800 p-4 rounded-md">
+  //                           <h4 className="text-emerald-400 font-medium mb-2">Sources</h4>
+  //                           <ul className="list-disc pl-4 text-gray-300">
+  //                             {newsItems.sources?.map((url, index) => (
+  //                               <li key={index} className="mb-2">
+  //                                 <a 
+  //                                   href={url}
+  //                                   target="_blank"
+  //                                   rel="noopener noreferrer" 
+  //                                   className="text-blue-400 hover:underline"
+  //                                 >
+  //                                   {url}
+  //                                 </a>
+  //                               </li>
+  //                             ))}
+  //                           </ul>
+  //                         </div>
+  //                       )}
+  //                     </div>
+
+
+  //                     <div className="mt-6">
+  //                       <button 
+  //                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+  //                         onClick={() => {
+  //                           setSelectedClaims(newsItems.fact_check.detailed_analysis.claim_analysis);
+  //                           setShowClaimsDialog(true);
+  //                         }}
+  //                       >
+  //                         View Detailed Claim Analysis
+  //                       </button>
+  //                     </div>
+
+  //                   </div>
+  //                 </DialogContent>
+  //               </Dialog>
+  //             ))}
+  //           </div>
+  //           <ScrollBar orientation="horizontal" className="bg-gray-800" />
+  //         </ScrollArea>
+  
+  return (
+    <div className="space-y-4 mt-10 bg-black text-white min-h-screen">
+        <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+          <div className="flex items-center space-x-1">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="w-2 h-8 bg-blue-400 rounded-full animate-wave"
+                style={{
+                  animation: `wave 1s ease-in-out infinite`,
+                  animationDelay: `${i * 0.1}s`
+                }}
+              />
+            ))}
+          </div>
+          <span className="text-blue-400 font-medium">Fetching Latest News...</span>
+        </div>
+      
+        <div className="container mx-auto px-4 space-y-4">
+          {news.map((newsItem) => (
+            <Card 
+              key={newsItem.id} 
+              className="p-6 bg-gray-900 border-gray-800"
+            >
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-white">
+                  {newsItem.full_text.title}
+                </h3>
+                
+                <p className="text-gray-300 text-sm">
+                  {newsItem.full_text.summary}
+                </p>
+
+                <div className="flex space-x-4">
+                  <a 
+                    href={newsItem.full_text.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Open Article
+                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors">
+                        View Analysis
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
+                          {newsItem.full_text.title}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="mt-4 space-y-6">
+                        <div>
+                          <p className={`text-lg font-semibold ${
+                            newsItem.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
                               ? "text-emerald-400"
-                              : newsItems.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
+                              : newsItem.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
                               ? "text-amber-400"
                               : "text-rose-400"
-                          }`}
-                        >
-                          Truth Score: {newsItems.fact_check.detailed_analysis.overall_analysis.truth_score}
-                        </p>
-                        <p className="text-sm text-gray-200">
-                          Reliability: {newsItems.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
-                        </p>
-                        <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-200">Key Findings:</p>
-                          <ul className="list-disc pl-4 text-xs text-gray-400">
-                            {newsItems.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
+                          }`}>
+                            Truth Score: {newsItem.fact_check.detailed_analysis.overall_analysis.truth_score}
+                          </p>
+                          <p className="text-gray-200 mt-2">
+                            Reliability: {newsItem.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
+                          </p>
+                        </div>
+
+                        <div>
+                          <h4 className="text-emerald-400 font-medium mb-2">Key Findings:</h4>
+                          <ul className="list-disc pl-4 text-gray-300">
+                            {newsItem.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
                               <li key={index}>{finding}</li>
                             ))}
                           </ul>
                         </div>
-                        {/* <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-200">Patterns Identified:</p>
-                          <ul className="list-disc pl-4 text-xs text-gray-400">
-                            {newsItems.fact_check.detailed_analysis.overall_analysis.patterns_identified.map((pattern, index) => (
-                              <li key={index}>{pattern}</li>
-                            ))}
-                          </ul>
-                        </div> */}
-                      </div>
 
-                      <div className="mt-6">
-                        <button 
-                          className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
-                          onClick={() => setShowSources(!showSources)}
-                        >
-                          {showSources ? 'Hide Sources' : 'Show Sources'}
-                        </button>
-                        
+                        <div className="flex space-x-4">
+                          <button 
+                            className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+                            onClick={() => setShowSources(!showSources)}
+                          >
+                            {showSources ? 'Hide Sources' : 'Show Sources'}
+                          </button>
+                          
+                          <button 
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                            onClick={() => {
+                              setSelectedClaims(newsItem.fact_check.detailed_analysis.claim_analysis);
+                              setShowClaimsDialog(true);
+                            }}
+                          >
+                            View Detailed Claims
+                          </button>
+                        </div>
+
                         {showSources && (
-                          <div className="mt-4 bg-gray-800 p-4 rounded-md">
+                          <div className="bg-gray-800 p-4 rounded-md">
                             <h4 className="text-emerald-400 font-medium mb-2">Sources</h4>
                             <ul className="list-disc pl-4 text-gray-300">
-                              {newsItems.sources?.map((url, index) => (
+                              {newsItem.sources?.map((url, index) => (
                                 <li key={index} className="mb-2">
                                   <a 
                                     href={url}
@@ -297,27 +452,13 @@ const RealtimeNews = () => {
                           </div>
                         )}
                       </div>
-
-
-                      <div className="mt-6">
-                        <button 
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                          onClick={() => {
-                            setSelectedClaims(newsItems.fact_check.detailed_analysis.claim_analysis);
-                            setShowClaimsDialog(true);
-                          }}
-                        >
-                          View Detailed Claim Analysis
-                        </button>
-                      </div>
-
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" className="bg-gray-800" />
-          </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
   
           <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
@@ -396,8 +537,8 @@ const RealtimeNews = () => {
               </div>
             </DialogContent>
           </Dialog>
-        </>
-      )}
+        {/* </>
+      )} */}
     </div>
   );    
 };

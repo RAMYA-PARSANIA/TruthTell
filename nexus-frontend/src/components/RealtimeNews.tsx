@@ -36,6 +36,17 @@ interface NewsObject {
             potential_consequences: string[],
             spread_risk: number
           }
+        }[],
+        source_analysis: {
+          source: string,
+          credibility_score: number,
+          fact_checking_history: number,
+          transparency_score: number,
+          expertise_level: number,
+          additional_metrics: {
+            citation_score: number,
+            peer_recognition: number,
+          }
         }[]
       },
     };
@@ -56,10 +67,11 @@ export const pusherClient = new PusherClient(
 const RealtimeNews = () => {
   //NewsObject state
   const [news, setNews] = useState<NewsObject[]>([]);
-  const [selectedClaims, setSelectedClaims] = useState<any>(null);
-  const [showClaimsDialog, setShowClaimsDialog] = useState(false);
+  // const [selectedClaims] = useState<any>(null);
+  // const [showClaimsDialog, setShowClaimsDialog] = useState(false);
   // const [isLoading, setIsLoading] = useState(true);
   const [showSources, setShowSources] = useState(false);
+  const [expandedClaims, setExpandedClaims] = useState<{[key: number]: boolean}>({});
   const api_url = import.meta.env.VITE_API_URL;
   
   useEffect(() => {
@@ -381,163 +393,207 @@ const RealtimeNews = () => {
                         View Analysis
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+                    <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-6xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle className="text-xl font-bold text-blue-400 border-b border-gray-700 pb-2">
                           {newsItem.full_text.title}
                         </DialogTitle>
                       </DialogHeader>
-                      <div className="mt-4 space-y-6">
-                        <div>
-                          <p className={`text-lg font-semibold ${
-                            newsItem.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
-                              ? "text-emerald-400"
-                              : newsItem.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
-                              ? "text-amber-400"
-                              : "text-rose-400"
-                          }`}>
-                            Truth Score: {newsItem.fact_check.detailed_analysis.overall_analysis.truth_score}
-                          </p>
-                          <p className="text-gray-200 mt-2">
-                            Reliability: {newsItem.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
-                          </p>
-                        </div>
-
-                        <div>
-                          <h4 className="text-emerald-400 font-medium mb-2">Key Findings:</h4>
-                          <ul className="list-disc pl-4 text-gray-300">
-                            {newsItem.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
-                              <li key={index}>{finding}</li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="flex space-x-4">
-                          <button 
-                            className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
-                            onClick={() => setShowSources(!showSources)}
-                          >
-                            {showSources ? 'Hide Sources' : 'Show Sources'}
-                          </button>
+                      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column - Overall Analysis */}
+                        <div className="space-y-6">
+                          <h3 className="text-lg font-bold text-emerald-400 border-b border-gray-700 pb-2">
+                            Overall Analysis
+                          </h3>
                           
-                          <button 
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                            onClick={() => {
-                              setSelectedClaims(newsItem.fact_check.detailed_analysis.claim_analysis);
-                              setShowClaimsDialog(true);
-                            }}
-                          >
-                            View Detailed Claims
-                          </button>
-                        </div>
+                          <div>
+                            <p className={`text-lg font-semibold ${
+                              newsItem.fact_check.detailed_analysis.overall_analysis.truth_score >= 0.75
+                                ? "text-emerald-400"
+                                : newsItem.fact_check.detailed_analysis.overall_analysis.truth_score < 0.75
+                                ? "text-amber-400"
+                                : "text-rose-400"
+                            }`}>
+                              Truth Score: {newsItem.fact_check.detailed_analysis.overall_analysis.truth_score}
+                            </p>
+                            <p className="text-gray-200 mt-2">
+                              Reliability: {newsItem.fact_check.detailed_analysis.overall_analysis.reliability_assessment}
+                            </p>
+                          </div>
 
-                        {showSources && (
-                          <div className="bg-gray-800 p-4 rounded-md">
-                            <h4 className="text-emerald-400 font-medium mb-2">Sources</h4>
+                          <div>
+                            <h4 className="text-emerald-400 font-medium mb-2">Key Findings:</h4>
                             <ul className="list-disc pl-4 text-gray-300">
-                              {newsItem.sources?.map((url, index) => (
-                                <li key={index} className="mb-2">
-                                  <a 
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer" 
-                                    className="text-blue-400 hover:underline"
-                                  >
-                                    {url}
-                                  </a>
-                                </li>
+                              {newsItem.fact_check.detailed_analysis.overall_analysis.key_findings.map((finding, index) => (
+                                <li key={index}>{finding}</li>
                               ))}
                             </ul>
                           </div>
-                        )}
+
+                          {/* put claim analysis part here */}
+                            <div className="space-y-6">
+                                                            
+                              <div>
+                                {/* Collapsible Claims Section */}
+                                <div className="space-y-4">
+                                  {newsItem.fact_check.detailed_analysis.claim_analysis.map((claim, index) => (
+                                    <div key={index} className="border border-gray-700 rounded-md overflow-hidden">
+                                      <button 
+                                        className="w-full px-4 py-3 bg-gray-800 text-left hover:bg-gray-700 transition-colors flex justify-between items-center"
+                                        onClick={() => {
+                                          // Toggle this specific claim's expanded state
+                                          const newExpandedClaims = {...expandedClaims};
+                                          newExpandedClaims[index] = !newExpandedClaims[index];
+                                          setExpandedClaims(newExpandedClaims);
+                                        }}
+                                      >
+                                        <div>
+                                          <h3 className="font-medium text-white">Claim Analysis</h3>
+                                          <p className={`text-sm mt-1 ${
+                                            claim.verification_status === "Verified" 
+                                              ? "text-emerald-400" 
+                                              : claim.verification_status === "Partially Verified" 
+                                              ? "text-amber-400" 
+                                              : "text-rose-400"
+                                          }`}>
+                                            {claim.verification_status} - Confidence: {claim.confidence_level}
+                                          </p>
+                                        </div>
+                                        <span>{expandedClaims[index] ? '▲' : '▼'}</span>
+                                      </button>
+                                      
+                                      {expandedClaims[index] && (
+                                        <div className="p-4 bg-gray-900">
+                                            <div className="bg-gray-900 space-y-4">
+                                              <p className="font-medium text-white">{claim.claim}</p>
+                                            </div>
+                                            
+                                            <div className="bg-gray-900 space-y-4">
+                                              <br />
+                                            </div>
+                                          <div className="space-y-4">
+                                            <div>
+                                              <h4 className="text-emerald-400 font-medium mb-2">Misinformation Impact</h4>
+                                              <div className="grid grid-cols-2 gap-2">
+                                                <div>
+                                                  <p className="text-gray-400 text-sm">Severity:</p>
+                                                  <p className="text-gray-200">{claim.misinformation_impact.severity}</p>
+                                                </div>
+                                                <div>
+                                                  <p className="text-gray-400 text-sm">Spread Risk:</p>
+                                                  <p className="text-gray-200">{claim.misinformation_impact.spread_risk}</p>
+                                                </div>
+                                              </div>
+                                              
+                                              <div className="mt-2">
+                                                <p className="text-gray-400 text-sm">Affected Domains:</p>
+                                                <ul className="list-disc pl-4 text-gray-300">
+                                                  {claim.misinformation_impact.affected_domains.map((domain, i) => (
+                                                    <li key={i}>{domain}</li>
+                                                  ))}
+                                                </ul>
+                                              </div>
+                                              
+                                              <div className="mt-2">
+                                                <p className="text-gray-400 text-sm">Potential Consequences:</p>
+                                                <ul className="list-disc pl-4 text-gray-300">
+                                                  {claim.misinformation_impact.potential_consequences.map((consequence, i) => (
+                                                    <li key={i}>{consequence}</li>
+                                                  ))}
+                                                </ul>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                          </div>
+                          
+                        </div>
+
+                        {/* Right Column - Source Analysis */}
+                          <div>
+                            <button 
+                              className="w-full px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors flex justify-between items-center"
+                              onClick={() => setShowSources(!showSources)}
+                            >
+                              <span>{showSources ? 'Hide Sources' : 'Show Sources'}</span>
+                              <span>{showSources ? '▲' : '▼'}</span>
+                            </button>
+                            
+                            {showSources && (
+                              <div className="bg-gray-800 p-4 rounded-md mt-2">
+                                <h4 className="text-emerald-400 font-medium mb-2">Sources Analysis</h4>
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-sm text-left text-gray-300">
+                                    <thead className="text-xs text-gray-400 uppercase bg-gray-700">
+                                      <tr>
+                                        <th className="px-4 py-2">Source</th>
+                                        <th className="px-4 py-2">Credibility</th>
+                                        <th className="px-4 py-2">Fact Checking</th>
+                                        <th className="px-4 py-2">Transparency</th>
+                                        <th className="px-4 py-2">Expertise</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {newsItem.fact_check.detailed_analysis.source_analysis && newsItem.fact_check.detailed_analysis.source_analysis.map((source, index) => (
+                                        <tr key={index} className="border-b border-gray-700 hover:bg-gray-700">
+                                          <td className="px-4 py-2">
+                                            <a 
+                                              href={newsItem.sources[index] || "#"}
+                                              target="_blank"
+                                              rel="noopener noreferrer" 
+                                              className="text-blue-400 hover:underline"
+                                            >
+                                              {source.source}
+                                            </a>
+                                          </td>
+                                          <td className={`px-4 py-2 ${
+                                            source.credibility_score > 0.7 ? "text-emerald-400" : 
+                                            source.credibility_score > 0.4 ? "text-amber-400" : "text-rose-400"
+                                          }`}>
+                                            {source.credibility_score.toFixed(2)}
+                                          </td>
+                                          <td className="px-4 py-2">{source.fact_checking_history.toFixed(2)}</td>
+                                          <td className="px-4 py-2">{source.transparency_score.toFixed(2)}</td>
+                                          <td className="px-4 py-2">{source.expertise_level.toFixed(2)}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                                <div className="mt-4">
+                                  <h4 className="text-emerald-400 font-medium mb-2">Source URLs</h4>
+                                  <ul className="list-disc pl-4 text-gray-300">
+                                    {newsItem.sources?.map((url, index) => (
+                                      <li key={index} className="mb-2">
+                                        <a 
+                                          href={url}
+                                          target="_blank"
+                                          rel="noopener noreferrer" 
+                                          className="text-blue-400 hover:underline"
+                                        >
+                                          {url}
+                                        </a>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                       </div>
                     </DialogContent>
                   </Dialog>
+
                 </div>
               </div>
             </Card>
           ))}
         </div>
-  
-          <Dialog open={showClaimsDialog} onOpenChange={setShowClaimsDialog}>
-            <DialogContent className="bg-gray-900 border-gray-800 text-white">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-bold text-blue-400">
-                  Claim Analysis
-                </DialogTitle>
-              </DialogHeader>
-              <div className="mt-4">
-                <ul className="space-y-4">
-                  {selectedClaims?.map((claim: any, index: number) => (
-                    <li key={index}>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <button className="w-full text-left p-3 bg-gray-800 rounded-md hover:bg-gray-700 transition-colors">
-                            <p className="font-medium text-white">{claim.claim}</p>
-                            <p className={`text-sm mt-1 ${
-                              claim.verification_status === "Verified" 
-                                ? "text-emerald-400" 
-                                : claim.verification_status === "Partially Verified" 
-                                ? "text-amber-400" 
-                                : "text-rose-400"
-                            }`}>
-                              {claim.verification_status} - Confidence: {claim.confidence_level}
-                            </p>
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-800 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-blue-400">Detailed Claim Analysis</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            {/* <div>
-                              <h4 className="text-emerald-400 font-medium mb-2">Evidence Quality</h4>
-                              <p className="text-gray-200">Strength: {claim.evidence_quality.strength}</p>
-                              <div className="mt-2">
-                                <p className="text-gray-400">Gaps:</p>
-                                <ul className="list-disc pl-4 text-gray-300">
-                                  {claim.evidence_quality.gaps.map((gap: string, i: number) => (
-                                    <li key={i}>{gap}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div> */}
-                            {/* <div>
-                              <h4 className="text-emerald-400 font-medium mb-2">Source Assessment</h4>
-                              <ul className="space-y-2">
-                                {claim.source_assessment.map((source: any, i: number) => (
-                                  <li key={i} className="bg-gray-800 p-2 rounded">
-                                    <a href={source.url} className="text-blue-400 hover:underline">{source.url}</a>
-                                    <p className="text-sm text-gray-300">Credibility: {source.credibility_metrics.credibility_score}</p>
-                                    <p className="text-sm text-gray-300">Bias: {source.credibility_metrics.bias_rating}</p>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div> */}
-                            <div>
-                              <h4 className="text-emerald-400 font-medium mb-2">Misinformation Impact</h4>
-                              <p className="text-gray-200">Severity: {claim.misinformation_impact.severity}</p>
-                              <p className="text-gray-200">Spread Risk: {claim.misinformation_impact.spread_risk}</p>
-                              <div className="mt-2">
-                                <p className="text-gray-400">Potential Consequences:</p>
-                                <ul className="list-disc pl-4 text-gray-300">
-                                  {claim.misinformation_impact.potential_consequences.map((consequence: string, i: number) => (
-                                    <li key={i}>{consequence}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </DialogContent>
-          </Dialog>
-        {/* </>
-      )} */}
     </div>
   );    
 };

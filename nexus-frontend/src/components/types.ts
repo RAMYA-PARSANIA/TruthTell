@@ -54,10 +54,23 @@ interface OverallAnalysis {
   truth_score: number;
 }
 
+interface SourceAssessment {
+  source: string; //
+  credibility_score: number; //
+  fact_checking_history: number; //
+  transparency_score: number; //
+  expertise_level: number; //
+  additional_metrics: {
+    citation_score: number;
+    peer_recognition: number;
+  }
+}
+
 interface FactCheckResult {
   claim_analysis: ClaimAnalysis[]; //
   // meta_analysis: MetaAnalysis; //
   overall_analysis: OverallAnalysis; //
+  source_analysis: SourceAssessment[]; //
 }
 
 // interface ClaimExplanation {

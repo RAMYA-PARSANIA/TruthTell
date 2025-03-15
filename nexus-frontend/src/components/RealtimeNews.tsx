@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -59,7 +58,7 @@ const RealtimeNews = () => {
   const [news, setNews] = useState<NewsObject[]>([]);
   const [selectedClaims, setSelectedClaims] = useState<any>(null);
   const [showClaimsDialog, setShowClaimsDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [showSources, setShowSources] = useState(false);
   const api_url = import.meta.env.VITE_API_URL;
   
@@ -70,7 +69,7 @@ const RealtimeNews = () => {
         const data = await response.json();
         setNews([...data.content]);
         // console.log("Initial news fetched:", data);
-        setIsLoading(false);
+        // setIsLoading(false);
       } catch (error) {
         console.error('Error fetching initial news:', error);
       }
@@ -105,7 +104,7 @@ const RealtimeNews = () => {
         const newsUpdated = [data, ...prevNews];
         return newsUpdated;
       });
-      setIsLoading(false);
+      // setIsLoading(false);
     });
   
     return () => {

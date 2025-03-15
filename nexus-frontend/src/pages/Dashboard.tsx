@@ -39,7 +39,7 @@ export default function Dashboard() {
               value="nlp-model"
               className="p-3 bg-gray-800 text-white hover:bg-gray-700 data-[state=active]:bg-blue-600"
             >
-              NLP Model 
+              NLP Model and Knowledge Graph
             </TabsTrigger>
             <TabsTrigger
               value="deepfake-detection"

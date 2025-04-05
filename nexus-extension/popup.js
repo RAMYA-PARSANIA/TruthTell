@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Send data to Python backend
         statusDiv.textContent = "Sending to Python backend...";
-        const response = await fetch('http://127.0.0.1:8000/api/fact-check', {
+        const response = await fetch(`${window.extensionConfig.apiUrl}/api/fact-check`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

@@ -185,5 +185,5 @@ async def fact_check_transcript(transcript_data: TranscriptData):
 async def health_check():
     return {"status": "healthy", "service": "fact-checker-api"}
 
-if __name__ == '__main__':
-    uvicorn.run("app:app", host='127.0.0.1', port=7777, reload=True)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

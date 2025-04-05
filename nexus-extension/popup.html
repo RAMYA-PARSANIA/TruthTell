@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nexus Of Truth</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --bg-primary: #000000;
+      --bg-secondary: #111111;
+      --bg-card: #1a1a1a;
+      --bg-hover: #2a2a2a;
+      --border-color: #333333;
+      --text-primary: #ffffff;
+      --text-secondary: #cccccc;
+      --text-muted: #999999;
+      --blue-primary: #3b82f6;
+      --blue-hover: #2563eb;
+      --green-primary: #10b981;
+      --amber-primary: #f59e0b;
+      --rose-primary: #f43f5e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 450px;
+      height: 600px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+      height: 100%;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--blue-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--blue-primary), var(--green-primary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient 8s ease infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.5s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    button {
+      background-color: var(--blue-primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.5s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    button:hover {
+      background-color: var(--blue-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #status {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 6px;
+      background-color: var(--bg-secondary);
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #results {
+      margin-top: 10px;
+      padding: 16px;
+      border-radius: 8px;
+      background-color: var(--bg-secondary);
+      display: none;
+      max-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+    }
+
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--blue-primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .fact-item {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .fact-item:last-child {
+      border-bottom: none;
+    }
+
+    .fact-statement {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .fact-explanation {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .accurate {
+      color: var(--green-primary);
+    }
+
+    .inaccurate {
+      color: var(--rose-primary);
+    }
+
+    .neutral, .partially-accurate {
+      color: var(--amber-primary);
+    }
+
+    .unverifiable {
+      color: var(--text-muted);
+    }
+
+    .summary {
+      padding: 16px;
+      background-color: var(--bg-card);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--blue-primary);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .summary-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--blue-primary);
+    }
+
+    .claims-section {
+      margin-top: 20px;
+    }
+
+    .claims-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--green-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Animations for verification process */
+    @keyframes scanning {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .scan-progress {
+      height: 4px;
+      background-color: var(--blue-primary);
+      border-radius: 2px;
+      width: 0%;
+      margin-top: 8px;
+      animation: scanning 2s ease-in-out;
+    }
+
+    /* Truth score indicator */
+    .truth-score {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .score-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .score-bar {
+      flex: 1;
+      height: 8px;
+      background-color: var(--bg-card);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+
+    .high-score {
+      background-color: var(--green-primary);
+    }
+
+    .medium-score {
+      background-color: var(--amber-primary);
+    }
+
+    .low-score {
+      background-color: var(--rose-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">N</div>
+        <h2>Nexus Of Truth</h2>
+      </div>
+    </div>
+    
+    <p class="description">Verify the factual accuracy of the current webpage using advanced AI analysis. Get detailed insights about claims and their verification status.</p>
+    
+    <button id="checkFactsBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      Verify Facts
+    </button>
+    
+    <div id="status"></div>
+    <div id="results"></div>
+  </div>
+  
+  <script src="popup.js"></script>
+  <script>
+    document.getElementById('checkFactsBtn').addEventListener('click', function() {
+    const status = document.getElementById('status');
+    status.style.display = 'block';
+    status.innerHTML = `
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <span>Analyzing content...</span>
+      </div>
+      <div class="scan-progress"></div>
+    `;
+    
+  });
+    document.getElementById('checkFactsBtn').addEventListener('click', function() {
+      const status = document.getElementById('status');
+      status.style.display = 'block';
+      status.innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <span>Analyzing content...</span>
+        </div>
+        <div class="scan-progress"></div>
+      `;
+      
+      setTimeout(() => {
+        const results = document.getElementById('results');
+        results.style.display = 'block';
+        
+        results.innerHTML = `
+          <div class="summary">
+            <div class="summary-title">Analysis Summary</div>
+            <p>The content contains a mix of accurate and partially accurate claims about climate change.</p>
+          </div>
+          
+          <div class="truth-score">
+            <div class="score-value">0.72</div>
+            <div class="score-bar">
+              <div class="score-fill medium-score" style="width: 72%"></div>
+            </div>
+          </div>
+          
+          <div class="claims-section">
+            <div class="claims-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Claims Analysis
+            </div>
+          </div>
+        `;
+        
+        const claimsData = [
+          {
+            statement: "Global temperatures have risen by approximately 1°C since pre-industrial times.",
+            accuracy: "accurate",
+            explanation: "This claim is accurate according to multiple scientific sources including NASA and the IPCC."
+          },
+          {
+            statement: "Climate change is solely caused by human activities.",
+            accuracy: "partially accurate",
+            explanation: "While human activities are the dominant cause of observed warming, natural factors also play a minor role."
+          },
+          {
+            statement: "Renewable energy is now cheaper than fossil fuels in all contexts.",
+            accuracy: "inaccurate",
+            explanation: "While renewable energy is increasingly cost-competitive, it is not yet cheaper in all contexts or regions."
+          }
+        ];
+        
+        const claimsSection = document.querySelector('.claims-section');
+        claimsData.forEach((claim, index) => {
+          const claimElement = document.createElement('div');
+          claimElement.className = 'fact-item';
+          claimElement.style.animationDelay = `${0.2 + (index * 0.1)}s`;
+          
+          claimElement.innerHTML = `
+            <div class="fact-statement">${claim.statement}</div>
+            <div class="${claim.accuracy}">Status: ${claim.accuracy}</div>
+            <div class="fact-explanation">${claim.explanation}</div>
+          `;
+          
+          claimsSection.appendChild(claimElement);
+        });
+        
+        status.style.display = 'none';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

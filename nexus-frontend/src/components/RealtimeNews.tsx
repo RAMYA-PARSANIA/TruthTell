@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Livepeer } from "livepeer";
 
 //Interface for news object
 interface NewsObject {
@@ -73,6 +74,23 @@ const RealtimeNews = () => {
   const [showSources, setShowSources] = useState(false);
   const [expandedClaims, setExpandedClaims] = useState<{[key: number]: boolean}>({});
   const api_url = import.meta.env.VITE_API_URL;
+
+  const apiKey = import.meta.env.LIVEPEER_API_KEY;
+
+  const livepeer = new Livepeer({apiKey});
+
+  const streamData = {
+    name: "test_stream"
+  };
+
+  livepeer
+    .stream.create(streamData)
+    .then((response) => {
+      console.log("Stream created:", response);
+    })
+    .catch((error) => {
+      console.error("Error creating stream:", error);
+    });
   
   useEffect(() => {
     const fetchInitialNews = async () => {

@@ -27,6 +27,7 @@ export default function DeepfakeDetection() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileType, setFileType] = useState<"image" | "video">("image");
+  const api_url = import.meta.env.VITE_API_URL;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -60,8 +61,8 @@ export default function DeepfakeDetection() {
 
     try {
       const endpoint = fileType === "video"
-        ? "http://localhost:8000/analyze-video"
-        : "http://localhost:8000/analyze-deepfake";
+        ? `${api_url}/analyze-video`
+        : `${api_url}/analyze-deepfake`;
 
       const response = await fetch(endpoint, {
         method: "POST",

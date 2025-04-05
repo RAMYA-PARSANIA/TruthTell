@@ -276,6 +276,7 @@ import VideoBroadcast from "./broadcast/videoBroadcast";
 
 export default function Broadcasts() {
   const [activeTab, setActiveTab] = useState("text");
+  console.log(activeTab);
 
   return (
     <div className="p-8 bg-black min-h-screen">

@@ -54,7 +54,9 @@ interface GeminiAnalysis {
 // Detailed analysis with image instead of graph data
 interface DetailedAnalysis {
   entities: Entity[];
-  knowledge_graph_image: string; // Base64 encoded image as data URL
+  knowledge_graph: {
+    image: string;
+  }; // Base64 encoded image as data URL
   is_fake: boolean;
   gemini_analysis: GeminiAnalysis;
 }
@@ -149,7 +151,7 @@ const NLP: React.FC = () => {
         confidence: result.kg_confidence,
       },
       {
-        name: "Gemini AI",
+        name: "AI Prediction",
         prediction: result.gemini_prediction,
         confidence: parseFloat(result.gemini_confidence),
       },
@@ -236,9 +238,7 @@ const NLP: React.FC = () => {
 
     return (
       <div className=" mb-8">
-        <h2 className="text-xl text-white font-bold mb-4">
-          Gemini AI Analysis
-        </h2>
+        <h2 className="text-xl text-white font-bold mb-4">AI Analysis</h2>
 
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <h3 className="font-semibold text-lg mb-2">Classification</h3>
@@ -540,7 +540,7 @@ const NLP: React.FC = () => {
         <h2 className="text-xl text-white font-bold mb-4">Knowledge Graph</h2>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <img
-            src={result.detailed_analysis.knowledge_graph_image}
+            src={`data:image/png;base64,${result.detailed_analysis.knowledge_graph.image}`}
             alt="Knowledge Graph"
             className="w-full h-auto rounded"
           />

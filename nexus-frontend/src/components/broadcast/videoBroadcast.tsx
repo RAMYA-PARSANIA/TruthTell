@@ -122,7 +122,7 @@ function setupSpeechRecognition(
   recognition.lang = "en-US";
 
   let transcriptBuffer = "";
-  const sendInterval = 5000;
+  const sendInterval = 10;
   let lastSendTime = Date.now();
   let api_url1 = import.meta.env.VITE_API_URL1;
 

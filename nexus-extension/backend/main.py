@@ -9,6 +9,7 @@ import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
 from datetime import datetime
 import uvicorn
+from google.generativeai import types
 
 load_dotenv()
 
@@ -66,6 +67,9 @@ def create_fact_check_model():
     return genai.GenerativeModel(
         model_name="gemini-2.0-flash",
         generation_config=generation_config,
+        tools=[
+            types.Tool(google_search=types.GoogleSearch()),
+        ]
     )
 
 # Define request model

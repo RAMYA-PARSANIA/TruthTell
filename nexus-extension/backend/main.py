@@ -145,6 +145,9 @@ async def fact_check_transcript(transcript_data: TranscriptData):
         # Create the model and chat session
         model = create_fact_check_model()
         chat = model.start_chat(history=[])
+
+        # Debugging
+        print(model.model_name)
         
         # Prepare prompt for Gemini API
         prompt = f"""
@@ -165,6 +168,9 @@ async def fact_check_transcript(transcript_data: TranscriptData):
         # Send message to Gemini
         response = chat.send_message(prompt)
         
+        # For debugging purposes, print the response
+        print(response.text)
+
         # Parse the response
         analysis_result = json.loads(response.text)
         

@@ -28,7 +28,17 @@ import {
 } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Mic, MicOff, Video, VideoOff, PhoneOff, AlertTriangle, CheckCircle, HelpCircle, XCircle } from "lucide-react";
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  PhoneOff,
+  AlertTriangle,
+  CheckCircle,
+  HelpCircle,
+  XCircle,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import {
   Dialog,
@@ -110,12 +120,16 @@ declare global {
 function setupSpeechRecognition(
   addFactCheckResult: (result: FactCheckResponseWithTranscript) => void
 ) {
-  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+  if (
+    !("webkitSpeechRecognition" in window) &&
+    !("SpeechRecognition" in window)
+  ) {
     console.error("Speech recognition not supported in this browser");
     return null;
   }
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
@@ -124,7 +138,7 @@ function setupSpeechRecognition(
   let transcriptBuffer = "";
   const sendInterval = 10;
   let lastSendTime = Date.now();
-  let api_url1 = import.meta.env.VITE_API_URL1;
+  const api_url1 = import.meta.env.VITE_API_URL1;
 
   const sendTranscript = async (transcript: string) => {
     if (!transcript.trim()) return;
@@ -147,15 +161,12 @@ function setupSpeechRecognition(
   };
 
   recognition.onresult = (event: SpeechRecognitionEvent) => {
-    let interimTranscript = "";
     let finalTranscript = "";
 
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
         finalTranscript += transcript;
-      } else {
-        interimTranscript += transcript;
       }
     }
 
@@ -249,16 +260,21 @@ const FactCheckModalList = ({
                       <div className="space-y-3">
                         <h4 className="font-medium">Claims:</h4>
                         {result.analysis.claims.map((claim, index) => {
-                          const icon =
-                            claim.accuracy.toLowerCase().includes("accurate") ? (
-                              <CheckCircle className="h-5 w-5 text-green-500" />
-                            ) : claim.accuracy.toLowerCase().includes("inaccurate") ? (
-                              <XCircle className="h-5 w-5 text-red-500" />
-                            ) : claim.accuracy.toLowerCase().includes("partially") ? (
-                              <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                            ) : (
-                              <HelpCircle className="h-5 w-5 text-gray-500" />
-                            );
+                          const icon = claim.accuracy
+                            .toLowerCase()
+                            .includes("accurate") ? (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          ) : claim.accuracy
+                              .toLowerCase()
+                              .includes("inaccurate") ? (
+                            <XCircle className="h-5 w-5 text-red-500" />
+                          ) : claim.accuracy
+                              .toLowerCase()
+                              .includes("partially") ? (
+                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                          ) : (
+                            <HelpCircle className="h-5 w-5 text-gray-500" />
+                          );
                           return (
                             <div
                               key={index}
@@ -267,7 +283,9 @@ const FactCheckModalList = ({
                               {icon}
                               <div>
                                 <p className="font-medium">{claim.statement}</p>
-                                <Badge variant="outline">{claim.accuracy}</Badge>
+                                <Badge variant="outline">
+                                  {claim.accuracy}
+                                </Badge>
                                 <p className="text-sm mt-1 text-muted-foreground">
                                   {claim.explanation}
                                 </p>
@@ -279,7 +297,6 @@ const FactCheckModalList = ({
                     </div>
                   </ScrollArea>
                 </DialogContent>
-
               </Dialog>
             ))}
           </div>
@@ -353,7 +370,9 @@ const Basics = () => {
   const [micOn, setMic] = useState(true);
   const [cameraOn, setCamera] = useState(true);
   const cleanupRef = useRef<(() => void) | null>(null);
-  const [factCheckResults, setFactCheckResults] = useState<FactCheckResponseWithTranscript[]>([]);
+  const [factCheckResults, setFactCheckResults] = useState<
+    FactCheckResponseWithTranscript[]
+  >([]);
 
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const { localCameraTrack } = useLocalCameraTrack(cameraOn);

@@ -296,7 +296,7 @@ const About = () => {
                 { name: "TensorFlow", icon: "🧠", category: "AI/ML" },
                 { name: "PyTorch", icon: "🔥", category: "AI/ML" },
                 { name: "BERT", icon: "📝", category: "NLP" },
-                { name: "Neo4j", icon: "🕸️", category: "Database" },
+                { name: "Firebase", icon: "🕸️", category: "Database" },
                 { name: "React", icon: "⚛️", category: "Frontend" },
                 { name: "Python", icon: "🐍", category: "Backend" },
                 { name: "Tailwind CSS", icon: "💨", category: "Frontend" },
@@ -304,7 +304,7 @@ const About = () => {
                 { name: "Spline", icon: "🎨", category: "3D Graphics" },
                 { name: "Gemini", icon: "👾", category: "AI/ML" },
                 { name: "Pusher", icon: "📡", category: "Real-time" },
-                { name: "Flask", icon: "🧪", category: "Backend" },
+                { name: "FastAPI", icon: "🧪", category: "Backend" },
               ].map((tech, index) => (
                 <motion.div
                   key={index}
@@ -435,18 +435,6 @@ const About = () => {
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Dashboard
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Research
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contact
                 </a>
               </div>
             </div>
